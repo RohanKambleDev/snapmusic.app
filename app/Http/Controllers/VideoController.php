@@ -122,7 +122,7 @@ class VideoController extends Controller
         $stream = fopen($path, 'r');
 
         return response()->stream(
-            function() use ($stream) {
+            function () use ($stream) {
                 fpassthru($stream);
                 fclose($stream);
             },
