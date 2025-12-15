@@ -30,24 +30,61 @@ class VideoController extends Controller
     {
         $user = auth()->user();
 
-        // Store the uploaded files
-        $imagePath = $request->file('image')->store('uploads/images');
-        $audioPath = $request->file('audio')->store('uploads/audio');
+        try {
+            // Store the uploaded files
+            $imagePath = $request->file('image')->store('uploads/images');
+            if (!$imagePath) {
+                throw new \Exception('Failed to store image file');
+            }
 
-        // Create a new video job record
-        $videoJob = VideoJob::create([
-            'user_id' => $user->id,
-            'image_path' => $imagePath,
-            'audio_path' => $audioPath,
-            'status' => 'pending',
-        ]);
+            $audioPath = $request->file('audio')->store('uploads/audio');
+            if (!$audioPath) {
+                throw new \Exception('Failed to store audio file');
+            }
 
-        // Dispatch the job to the queue
-        ProcessVideoJob::dispatch($videoJob);
+            // Create a new video job record
+            $videoJob = VideoJob::create([
+                'user_id' => $user->id,
+                'image_path' => $imagePath,
+                'audio_path' => $audioPath,
+                'status' => 'pending',
+            ]);
 
-        return redirect()
-            ->route('videos.index')
-            ->with('success', 'Your video is being processed! You will see it here once it\'s ready.');
+            // Dispatch the job to the queue
+            ProcessVideoJob::dispatch($videoJob);
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Video processing started',
+                    'job_id' => $videoJob->id,
+                ]);
+            }
+
+            return redirect()
+                ->route('videos.index')
+                ->with('success', 'Your video is being processed! You will see it here once it\'s ready.');
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::channel('snapmusic')->error('UPLOAD_ERR: File upload or job creation failed', [
+                'user_id' => $user->id,
+                'image_name' => $request->file('image')?->getClientOriginalName(),
+                'audio_name' => $request->file('audio')?->getClientOriginalName(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred while processing your request.',
+                ], 500);
+            }
+
+            return back()
+                ->withInput()
+                ->withErrors(['error' => 'An error occurred while processing your upload. Please try again.']);
+        }
     }
 
     /**

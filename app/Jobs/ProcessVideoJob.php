@@ -33,7 +33,7 @@ class ProcessVideoJob implements ShouldQueue
             // Mark job as processing
             $this->videoJob->markAsProcessing();
 
-            Log::info('Starting video processing', [
+            Log::channel('snapmusic')->info('Starting video processing', [
                 'video_job_id' => $this->videoJob->id,
                 'user_id' => $this->videoJob->user_id,
             ]);
@@ -60,7 +60,7 @@ class ProcessVideoJob implements ShouldQueue
             // Mark job as completed
             $this->videoJob->markAsCompleted($videoPath);
 
-            Log::info('Video processing completed', [
+            Log::channel('snapmusic')->info('Video processing completed', [
                 'video_job_id' => $this->videoJob->id,
                 'output_path' => $videoPath,
             ]);
@@ -72,7 +72,7 @@ class ProcessVideoJob implements ShouldQueue
             // Mark job as failed
             $this->videoJob->markAsFailed($e->getMessage());
 
-            Log::error('Video processing failed', [
+            Log::channel('snapmusic')->error('FFMPEG_PROC_ERR: Video processing failed', [
                 'video_job_id' => $this->videoJob->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -93,7 +93,7 @@ class ProcessVideoJob implements ShouldQueue
             'Video processing failed after ' . $this->tries . ' attempts: ' . $exception->getMessage()
         );
 
-        Log::error('Video job permanently failed', [
+        Log::channel('snapmusic')->error('JOB_FAILED: Video job permanently failed', [
             'video_job_id' => $this->videoJob->id,
             'error' => $exception->getMessage(),
         ]);
