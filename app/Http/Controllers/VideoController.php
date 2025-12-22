@@ -16,6 +16,12 @@ class VideoController extends Controller
      */
     public function index()
     {
+        // Handle upload errors redirected from exception handler
+        if (request()->has('upload_error') && request()->get('upload_error') == '413') {
+            return redirect()->route('videos.index')
+                ->with('error', 'The uploaded files are too large. Maximum total size is ' . ini_get('post_max_size') . '.');
+        }
+
         $jobs = auth()->user()->videoJobs()
             ->latest()
             ->paginate(10);

@@ -1,0 +1,5 @@
+.phpunit.result.cache
+.env
+GEMINI.md
+GEMINI-bak.md
+/storage
