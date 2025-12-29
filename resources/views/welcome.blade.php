@@ -88,7 +88,7 @@
 </section>
 
 <!-- ================= PROBLEM ================= -->
-<section class="bg-gray-50 py-16">
+<section id="use-cases" class="bg-gray-50 py-16">
   <div class="max-w-7xl mx-auto px-6 text-center">
     <h2 class="text-2xl font-semibold mb-10">
       Why is sharing music so hard?
@@ -120,7 +120,7 @@
 </section>
 
 <!-- ================= STEPS ================= -->
-<section class="py-20">
+<section id="how-it-works" class="py-20">
   <div class="max-w-7xl mx-auto px-6 text-center">
     <h2 class="text-2xl font-semibold mb-12">
       3 Steps to Viral.
