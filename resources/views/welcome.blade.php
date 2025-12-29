@@ -31,59 +31,10 @@
   </script>
 </head>
 
-<body class="bg-white text-gray-900" x-data="{ mobileMenuOpen: false }">
+<body class="bg-white text-gray-900">
 
 <!-- ================= HEADER ================= -->
-<header class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between relative z-50">
-  <div class="flex items-center gap-2 font-semibold text-lg">
-    <a href="/" class="flex items-center gap-2 hover:text-black">
-        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-600"></div>
-        <span>SnapMusic</span>
-    </a>
-  </div>
-
-
-  <!-- Desktop Nav -->
-  <nav class="hidden md:flex items-center gap-8 text-sm text-gray-600">
-    <a href="#" class="hover:text-black">Use Cases</a>
-    <a href="#" class="hover:text-black">How it Works</a>
-    <a href="/videos" class="px-4 py-2 rounded-full bg-gradient-to-r from-yellow-400 to-green-400 text-black font-medium transition hover:shadow-md">
-      make a video
-    </a>
-  </nav>
-
-  <!-- Mobile Menu Button -->
-  <div class="md:hidden flex items-center">
-    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-600 hover:text-black focus:outline-none">
-      <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-      </svg>
-      <svg x-show="mobileMenuOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-      </svg>
-    </button>
-  </div>
-
-  <!-- Mobile Nav Overlay -->
-  <div 
-    x-show="mobileMenuOpen" 
-    x-transition:enter="transition ease-out duration-200"
-    x-transition:enter-start="opacity-0 scale-95"
-    x-transition:enter-end="opacity-100 scale-100"
-    x-transition:leave="transition ease-in duration-75"
-    x-transition:leave-start="opacity-100 scale-100"
-    x-transition:leave-end="opacity-0 scale-95"
-    @click.away="mobileMenuOpen = false"
-    x-cloak
-    class="absolute top-full left-0 right-0 m-4 p-6 bg-white shadow-xl rounded-2xl border border-gray-100 md:hidden flex flex-col gap-4 text-gray-600 z-50"
-  >
-    <a href="#" class="hover:text-black py-2 border-b border-gray-50" @click="mobileMenuOpen = false">Use Cases</a>
-    <a href="#" class="hover:text-black py-2 border-b border-gray-50" @click="mobileMenuOpen = false">How it Works</a>
-    <a href="/videos" class="mt-2 px-4 py-3 rounded-full bg-gradient-to-r from-yellow-400 to-green-400 text-black font-medium text-center shadow-lg" @click="mobileMenuOpen = false">
-      make a video
-    </a>
-  </div>
-</header>
+@include('layouts.navigation')
 
 <!-- ================= HERO ================= -->
 <section class="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-12 items-center">
