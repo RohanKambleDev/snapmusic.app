@@ -1,4 +1,4 @@
-{{-- resources/views/snapmusic/wizard.blade.php --}}
+{{-- resources/views/videos/index.blade.php --}}
 <!doctype html>
 <html lang="en">
 
@@ -7,51 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SnapMusic – Create</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body class="min-h-screen bg-gradient-to-b from-[#060A14] via-[#050814] to-[#040712] text-slate-100">
-    <!-- Top bar -->
-    {{-- <header class="px-6 pt-6">
-    <div class="mx-auto max-w-6xl flex items-center gap-3">
-      <div class="h-9 w-9 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.25)]">
-        <div class="h-5 w-5 rounded-full border-2 border-white/80 flex items-center justify-center">
-          <div class="h-2 w-2 rounded-full bg-white/90"></div>
-        </div>
-      </div>
-      <div class="text-lg font-semibold tracking-wide">SnapMusic</div>
-
-    <nav class="hidden md:flex items-center gap-8 text-sm text-gray-600">
-
-    @if (Route::has('login'))
-        @auth
-            <a
-                href="{{ url('/dashboard') }}"
-                class="hover:text-black"
-            >
-                Dashboard
-            </a>
-        @else
-            <a
-                href="{{ route('login') }}"
-                class="inline-block px-5 py-1.5 rounded-sm text-sm leading-normal"
-            >
-                Log in
-            </a>
-
-            @if (Route::has('register'))
-                <a
-                    href="{{ route('register') }}"
-                    class="inline-block px-5 py-1.5 rounded-sm text-sm leading-normal">
-                    Register
-                </a>
-            @endif
-        @endauth
-    @endif
-
-  </nav>
-  </div>
-    <div class="mx-auto mt-6 max-w-6xl border-t border-white/10"></div>
-  </header> --}}
 
     <header class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
         <div class="flex items-center gap-2 font-semibold text-lg">
@@ -61,11 +20,6 @@
         </div>
 
         <nav class="hidden md:flex items-center gap-8 text-sm text-gray-600">
-            {{-- <a href="#" class="hover:text-black">Use Cases</a>
-    <a href="#" class="hover:text-black">How it Works</a>
-    <a href="/videos" class="px-4 py-2 rounded-full bg-gradient-to-r from-yellow-400 to-green-400 text-black font-medium">
-      make a video
-    </a> --}}
             @if (Route::has('login'))
                 @auth
                     <a href="{{ url('/dashboard') }}"
@@ -90,6 +44,30 @@
 
     <main class="px-6 pb-16">
         <div class="mx-auto max-w-5xl">
+
+            <!-- Notifications -->
+            <div class="mt-6 mb-8">
+                @if (session('success'))
+                    <div class="rounded-xl bg-green-500/10 border border-green-500/20 p-4 text-green-200">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-red-200">
+                        {{ session('error') }}
+                    </div>
+                @endif
+                @if ($errors->any())
+                    <div class="rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-red-200">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+            </div>
+
             <!-- Stepper -->
             <div class="mt-10 flex items-center justify-center">
                 <div class="w-full max-w-2xl">
@@ -133,7 +111,9 @@
 
             <!-- Panels -->
             <div class="mt-10 flex justify-center">
-                <div class="w-full max-w-3xl">
+                <form id="uploadForm" action="{{ route('videos.upload') }}" method="POST" enctype="multipart/form-data" class="w-full max-w-3xl">
+                    @csrf
+                    
                     <!-- STEP 1: IMAGE -->
                     <section id="panel1" class="block">
                         <div
@@ -142,7 +122,7 @@
                                 class="group relative rounded-2xl border-2 border-dashed border-white/15 bg-black/20 p-10 md:p-14 text-center transition
                        hover:border-white/25 hover:bg-black/25"
                                 role="button" tabindex="0">
-                                <input id="imageInput" type="file" accept="image/png,image/jpeg" class="hidden" />
+                                <input id="imageInput" name="image" type="file" accept="image/png,image/jpeg" class="hidden" required />
 
                                 <!-- Default content -->
                                 <div id="imageEmpty" class="space-y-4">
@@ -226,7 +206,7 @@
                                 class="group relative rounded-2xl border-2 border-dashed border-white/15 bg-black/20 p-10 md:p-14 text-center transition
                        hover:border-white/25 hover:bg-black/25"
                                 role="button" tabindex="0">
-                                <input id="audioInput" type="file" accept="audio/*" class="hidden" />
+                                <input id="audioInput" name="audio" type="file" accept=".mp3,.wav" class="hidden" required />
 
                                 <div id="audioEmpty" class="space-y-4">
                                     <div
@@ -252,7 +232,7 @@
                                         Browse Files
                                     </button>
 
-                                    <div class="pt-2 text-xs text-white/30">Supports MP3, WAV, M4A (any audio/*)</div>
+                                    <div class="pt-2 text-xs text-white/30">Supports MP3, WAV</div>
                                 </div>
 
                                 <div id="audioPreviewWrap" class="hidden">
@@ -323,8 +303,7 @@
                                         <audio id="finalAudioPlayer" controls class="mt-3 w-full"></audio>
 
                                         <div class="mt-4 text-xs text-white/35">
-                                            Prototype note: “Create” is simulated here. In Laravel, submit the
-                                            image+audio to your backend to render MP4.
+                                            Ready to generate your video.
                                         </div>
                                     </div>
                                 </div>
@@ -336,27 +315,13 @@
                                     class="hidden rounded-2xl border border-white/10 bg-black/20 p-4">
                                     <div class="flex items-center justify-between gap-4">
                                         <div class="text-sm text-white/80">
-                                            <span class="font-semibold">Creating video…</span>
-                                            <span class="text-white/50" id="createHint">This is a demo
-                                                progress.</span>
+                                            <span class="font-semibold">Uploading...</span>
+                                            <span class="text-white/50" id="createHint">Please wait</span>
                                         </div>
-                                        <div class="text-xs text-white/50" id="createPct">0%</div>
                                     </div>
                                     <div class="mt-3 h-2 w-full rounded-full bg-white/10 overflow-hidden">
-                                        <div id="createBar" class="h-full w-0 bg-emerald-400/80"></div>
+                                        <div id="createBar" class="h-full w-full animate-pulse bg-emerald-400/80"></div>
                                     </div>
-                                </div>
-
-                                <div id="createDone"
-                                    class="hidden rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4">
-                                    <div class="text-sm text-emerald-100 font-semibold">Video ready (demo)</div>
-                                    <div class="mt-1 text-xs text-emerald-100/70">
-                                        Replace this with a real download URL returned by your Laravel controller.
-                                    </div>
-                                    <a id="downloadBtn" href="#"
-                                        class="mt-3 inline-flex w-fit rounded-full bg-emerald-400/90 px-6 py-2 text-sm font-semibold text-black hover:bg-emerald-400">
-                                        Download MP4
-                                    </a>
                                 </div>
 
                                 <div class="flex items-center justify-between">
@@ -376,13 +341,73 @@
                             </div>
                         </div>
                     </section>
+                </form>
+            </div>
 
-                    <!-- Tiny footer hint -->
-                    <div class="mt-6 text-center text-xs text-white/30">
-                        Tip: Click the dashed area to open file picker. Drag & drop also works.
-                    </div>
+            <!-- Your Videos List -->
+            @if(isset($jobs) && $jobs->count() > 0)
+            <div class="mt-16 border-t border-white/10 pt-10">
+                <h3 class="text-xl font-semibold mb-6">Your Videos</h3>
+                <div class="overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03]">
+                    <table class="min-w-full divide-y divide-white/10 text-sm">
+                        <thead class="bg-white/5">
+                            <tr>
+                                <th class="px-6 py-3 text-left font-medium text-white/60">ID</th>
+                                <th class="px-6 py-3 text-left font-medium text-white/60">Status</th>
+                                <th class="px-6 py-3 text-left font-medium text-white/60">Duration</th>
+                                <th class="px-6 py-3 text-left font-medium text-white/60">Created</th>
+                                <th class="px-6 py-3 text-left font-medium text-white/60">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/10">
+                            @foreach ($jobs as $job)
+                                <tr data-job-id="{{ $job->id }}" class="hover:bg-white/5 transition">
+                                    <td class="px-6 py-4 text-white/80">#{{ $job->id }}</td>
+                                    <td class="px-6 py-4 status-badge">
+                                        @if ($job->status === 'pending')
+                                            <span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-500/20">Pending</span>
+                                        @elseif ($job->status === 'processing')
+                                            <span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20">Processing</span>
+                                        @elseif ($job->status === 'completed')
+                                            <span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Completed</span>
+                                        @else
+                                            <span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-red-500/10 text-red-300 border border-red-500/20">Failed</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 text-white/60 duration-cell">
+                                        {{ $job->duration ? gmdate('i:s', $job->duration) : '-' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-white/60">
+                                        {{ $job->created_at->diffForHumans() }}
+                                    </td>
+                                    <td class="px-6 py-4 font-medium space-x-2 actions-cell">
+                                        @if ($job->isCompleted())
+                                            <a href="{{ route('videos.download', $job) }}" class="text-emerald-400 hover:text-emerald-300">Download</a>
+                                            <a href="{{ route('videos.stream', $job) }}" target="_blank" class="text-blue-400 hover:text-blue-300">Preview</a>
+                                        @endif
+                                        
+                                        @if ($job->isFailed())
+                                            <span class="text-red-400 cursor-help" title="{{ $job->error_message }}">Error</span>
+                                        @endif
+
+                                        <form action="{{ route('videos.destroy', $job) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this video?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-400 hover:text-red-300">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <div class="mt-4">
+                    {{ $jobs->links() }}
                 </div>
             </div>
+            @endif
+
         </div>
     </main>
 
@@ -449,13 +474,11 @@
         const finalAudioMeta = document.getElementById('finalAudioMeta');
         const finalAudioPlayer = document.getElementById('finalAudioPlayer');
         const createBtn = document.getElementById('createBtn');
+        const uploadForm = document.getElementById('uploadForm');
 
         const createStatus = document.getElementById('createStatus');
         const createBar = document.getElementById('createBar');
-        const createPctEl = document.getElementById('createPct');
-        const createDone = document.getElementById('createDone');
-        const downloadBtn = document.getElementById('downloadBtn');
-
+        
         // -------------------------
         // Helpers
         // -------------------------
@@ -566,10 +589,9 @@
         function setAudio(file) {
             if (!file) return;
 
-            // Basic validate: must be audio/*
+            // Basic validate
             if (!file.type.startsWith('audio/')) {
-                alert('Please upload a valid audio file (audio/*).');
-                return;
+                // simple check, strict validation on backend
             }
 
             if (state.audioUrl) URL.revokeObjectURL(state.audioUrl);
@@ -606,60 +628,29 @@
             finalAudioPlayer.src = state.audioUrl || '';
 
             // reset create UI
-            createDone.classList.add('hidden');
             createStatus.classList.add('hidden');
-            createBar.style.width = '0%';
-            createPctEl.textContent = '0%';
-            state.createPct = 0;
             state.creating = false;
-            if (state.createTimer) clearInterval(state.createTimer);
-            state.createTimer = null;
         }
 
-        function simulateCreate() {
-            if (!state.imageFile || !state.audioFile) {
+        // -------------------------
+        // Submit Handler
+        // -------------------------
+        createBtn.addEventListener('click', () => {
+             if (!state.imageFile || !state.audioFile) {
                 alert('Please select both image and audio first.');
                 return;
             }
-            if (state.creating) return;
-
+            
+            // Show loading UI
             state.creating = true;
-            createDone.classList.add('hidden');
             createStatus.classList.remove('hidden');
             createBtn.disabled = true;
             createBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-            state.createPct = 0;
-            createBar.style.width = '0%';
-            createPctEl.textContent = '0%';
-
-            state.createTimer = setInterval(() => {
-                // progress steps
-                const bump = Math.floor(Math.random() * 10) + 6; // 6..15
-                state.createPct = Math.min(100, state.createPct + bump);
-                createBar.style.width = `${state.createPct}%`;
-                createPctEl.textContent = `${state.createPct}%`;
-
-                if (state.createPct >= 100) {
-                    clearInterval(state.createTimer);
-                    state.createTimer = null;
-                    state.creating = false;
-
-                    createStatus.classList.add('hidden');
-                    createDone.classList.remove('hidden');
-
-                    // demo download
-                    downloadBtn.href = '#';
-                    downloadBtn.onclick = (e) => {
-                        e.preventDefault();
-                        alert('Demo: Replace this with a real MP4 download URL from your Laravel backend.');
-                    };
-
-                    createBtn.disabled = false;
-                    createBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
-            }, 250);
-        }
+            createBtn.innerText = 'Uploading...';
+            
+            // Submit form
+            uploadForm.submit();
+        });
 
         // -------------------------
         // Drag & Drop bindings
@@ -676,7 +667,13 @@
                 e.preventDefault();
                 highlight(false);
                 const files = e.dataTransfer?.files;
-                if (files && files.length) onFiles(files);
+                if (files && files.length) {
+                    onFiles(files);
+                    
+                    // Manually assign files to input (needed for form submit)
+                    const inputId = zoneEl.id === 'imageDrop' ? 'imageInput' : 'audioInput';
+                    document.getElementById(inputId).files = files;
+                }
             });
         }
 
@@ -743,12 +740,81 @@
 
         // Step 3 handlers
         backTo2.addEventListener('click', () => setStep(2));
-        createBtn.addEventListener('click', simulateCreate);
 
         // Init
         clearImage();
         clearAudio();
         setStep(1);
+
+        // -------------------------
+        // Polling (from index-bak)
+        // -------------------------
+        @if(isset($jobs))
+        const processingJobs = @json($jobs->whereIn('status', ['pending', 'processing'])->pluck('id')->toArray());
+
+        if (processingJobs.length > 0) {
+            setInterval(checkJobStatuses, 3000);
+            checkJobStatuses();
+        }
+
+        async function checkJobStatuses() {
+            const jobsToCheck = [...processingJobs];
+
+            for (const jobId of jobsToCheck) {
+                try {
+                    const response = await fetch(`/videos/${jobId}/status`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) continue;
+
+                    const data = await response.json();
+
+                    // Update the UI
+                    updateJobRow(jobId, data);
+
+                    if (data.status === 'completed' || data.status === 'failed') {
+                        const index = processingJobs.indexOf(jobId);
+                        if (index > -1) processingJobs.splice(index, 1);
+                        
+                        // Optional: Reload if all done to refresh links? 
+                        // Or just update the DOM.
+                         if (processingJobs.length === 0) {
+                            setTimeout(() => location.reload(), 1000);
+                        }
+                    }
+                } catch (error) {
+                    console.error(`Error checking job ${jobId}:`, error);
+                }
+            }
+        }
+
+        function updateJobRow(jobId, data) {
+            const row = document.querySelector(`tr[data-job-id="${jobId}"]`);
+            if (!row) return;
+
+            const statusCell = row.querySelector('.status-badge');
+            if (statusCell) {
+                let badgeHtml = '';
+                if (data.status === 'pending') {
+                    badgeHtml = '<span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-500/20">Pending</span>';
+                } else if (data.status === 'processing') {
+                    badgeHtml = '<span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20">Processing</span>';
+                } else if (data.status === 'completed') {
+                    badgeHtml = '<span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Completed</span>';
+                } else if (data.status === 'failed') {
+                    badgeHtml = '<span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-red-500/10 text-red-300 border border-red-500/20">Failed</span>';
+                }
+                statusCell.innerHTML = badgeHtml;
+            }
+            
+            // Note: Actions update logic similar to index-bak could be added here
+            // For brevity, relying on reload for full action buttons update
+        }
+        @endif
     </script>
 </body>
 
