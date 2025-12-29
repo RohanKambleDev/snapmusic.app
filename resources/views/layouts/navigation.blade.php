@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2 font-semibold text-lg hover:text-black transition">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-600"></div>
+                        <x-application-logo class="w-8 h-8" />
                         <span class="text-gray-900">SnapMusic</span>
                     </a>
                 </div>

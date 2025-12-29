@@ -161,7 +161,7 @@
 
     <div>
       <div class="flex items-center gap-2 font-semibold text-black mb-2">
-        <div class="w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-emerald-600"></div>
+        <x-application-logo class="w-6 h-6" />
         SnapMusic
       </div>
       Made for creators, big and small.

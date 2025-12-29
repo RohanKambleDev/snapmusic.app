@@ -8,8 +8,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
+Route::get('/dashboard', function (Illuminate\Http\Request $request) {
+    $query = auth()->user()->videoJobs()->latest();
+
+    if ($request->has('date')) {
+        $query->whereDate('created_at', $request->date);
+    }
+
+    $jobs = $query->paginate(10);
+
+    return view('dashboard', compact('jobs'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
