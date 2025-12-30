@@ -1,12 +1,17 @@
 <?php
 
+use App\Http\Controllers\HowItWorksController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UseCaseController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/use-cases', [UseCaseController::class, 'index'])->name('use-case.index');
+Route::get('/how-it-works', [HowItWorksController::class, 'index'])->name('how-it-works.index');
 
 Route::get('/dashboard', function (Illuminate\Http\Request $request) {
     $query = auth()->user()->videoJobs()->latest();

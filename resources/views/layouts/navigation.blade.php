@@ -21,10 +21,10 @@
                     <x-nav-link :href="route('videos.index')" :active="request()->routeIs('videos.*')">
                         {{ __('Create Video') }}
                     </x-nav-link>
-                    <x-nav-link href="/#use-cases">
+                    <x-nav-link :href="route('use-case.index')" :active="request()->routeIs('use-case.*')">
                         {{ __('Use Cases') }}
                     </x-nav-link>
-                    <x-nav-link href="/#how-it-works">
+                    <x-nav-link :href="route('how-it-works.index')" :active="request()->routeIs('how-it-works.*')">
                         {{ __('How it Works') }}
                     </x-nav-link>
                 </div>
@@ -89,10 +89,10 @@
             <x-responsive-nav-link :href="route('videos.index')" :active="request()->routeIs('videos.*')">
                 {{ __('Create Video') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link href="/#use-cases">
+            <x-responsive-nav-link :href="route('use-case.index')" :active="request()->routeIs('use-case.*')">
                 {{ __('Use Cases') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link href="/#how-it-works">
+            <x-responsive-nav-link :href="route('how-it-works.index')" :active="request()->routeIs('how-it-works.*')">
                 {{ __('How it Works') }}
             </x-responsive-nav-link>
         </div>
