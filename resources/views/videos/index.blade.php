@@ -1,48 +1,7 @@
-{{-- resources/views/videos/index.blade.php --}}
-<!doctype html>
-<html lang="en">
+{{-- <body class="min-h-screen bg-gradient-to-b from-[#060A14] via-[#050814] to-[#040712] text-slate-100"> --}}
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SnapMusic – Create</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-</head>
-
-<body class="min-h-screen bg-gradient-to-b from-[#060A14] via-[#050814] to-[#040712] text-slate-100">
-
-    <header class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-        <div class="flex items-center gap-2 font-semibold text-lg">
-            <a href="/" class="hover:text-white">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-600">SnapMusic</div>
-            </a>
-        </div>
-
-        <nav class="hidden md:flex items-center gap-8 text-sm text-gray-600">
-            @if (Route::has('login'))
-                @auth
-                    <a href="{{ url('/dashboard') }}"
-                        class="px-4 py-2 rounded-full bg-gradient-to-r from-yellow-400 to-green-400 text-black font-medium">
-                        Dashboard
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="inline-block px-5 py-1.5 rounded-sm text-sm leading-normal">
-                        Log in
-                    </a>
-
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}"
-                            class="inline-block px-5 py-1.5 rounded-sm text-sm leading-normal">
-                            Register
-                        </a>
-                    @endif
-                @endauth
-            @endif
-        </nav>
-    </header>
-
-    <main class="px-6 pb-16">
+<x-app-layout>
+    <div class="px-6 pb-16 pt-16 min-h-screen bg-gradient-to-b from-[#060A14] via-[#050814] to-[#040712] text-slate-100">
         <div class="mx-auto max-w-5xl">
 
             <!-- Notifications -->
@@ -409,7 +368,7 @@
             @endif
 
         </div>
-    </main>
+    </div>
 
     <script>
         // -------------------------
@@ -816,6 +775,4 @@
         }
         @endif
     </script>
-</body>
-
-</html>
+</x-app-layout>
