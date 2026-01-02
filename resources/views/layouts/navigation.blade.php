@@ -121,13 +121,21 @@
     </a>
   </div>
 
-
   <!-- Desktop Nav -->
   <nav class="hidden md:flex items-center gap-8 text-sm text-gray-600">
-    @if(request()->is('/'))
-      <a href="#" class="hover:text-black">Use Cases</a>
-      <a href="#" class="hover:text-black">How it Works</a>
+    @if(request()->is('/') || request()->is('how-it-works') || request()->is('use-cases'))
+        <x-nav-link :href="route('use-case.index')" :active="request()->routeIs('use-case.*')">
+            {{ __('Use Cases') }}
+        </x-nav-link>
+        <x-nav-link :href="route('how-it-works.index')" :active="request()->routeIs('how-it-works.*')">
+            {{ __('How it Works') }}
+        </x-nav-link>
     @endif
+    @auth
+        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            {{ __('Dashboard') }}
+        </x-nav-link>
+    @endauth
     <a href="/videos" class="px-4 py-2 rounded-full bg-gradient-to-r from-yellow-400 to-green-400 text-black font-medium transition hover:shadow-md">
       make a video
     </a>
@@ -197,6 +205,9 @@
       <a href="#" class="hover:text-black py-2 border-b border-gray-50" @click="mobileMenuOpen = false">Use Cases</a>
       <a href="#" class="hover:text-black py-2 border-b border-gray-50" @click="mobileMenuOpen = false">How it Works</a>
     @endif
+    @auth
+        <a href="{{ route('dashboard') }}" class="hover:text-black py-2 border-b border-gray-50" @click="mobileMenuOpen = false">Dashboard</a>
+    @endauth
     <a href="/videos" class="mt-2 px-4 py-3 rounded-full bg-gradient-to-r from-yellow-400 to-green-400 text-black font-medium text-center shadow-lg" @click="mobileMenuOpen = false">
       make a video
     </a>
