@@ -1,40 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>SnapMusic – Use Cases</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Alpine.js -->
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-  <style>
-    [x-cloak] { display: none !important; }
-  </style>
-
-  <!-- Tailwind config -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brandGreen: '#22c55e',
-            brandYellow: '#facc15',
-            brandPurple: '#a855f7',
-          }
-        }
-      }
-    }
-  </script>
-</head>
-
-<body class="bg-white text-gray-900">
-
-<!-- ================= HEADER ================= -->
-@include('layouts.navigation')
+<x-app-layout>
 
 <!-- ================= HERO ================= -->
 <section class="bg-gray-50 py-20">
@@ -145,40 +109,4 @@
     </a>
   </div>
 </section>
-
-<!-- ================= FOOTER ================= -->
-<footer class="border-t py-10">
-  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-sm text-gray-600">
-
-    <div>
-      <div class="flex items-center gap-2 font-semibold text-black mb-2">
-        <x-application-logo class="w-6 h-6" />
-        SnapMusic
-      </div>
-      Made for creators, big and small.
-    </div>
-
-    <div>
-      <h4 class="font-medium text-black mb-2">Quick Links</h4>
-      <ul class="space-y-1">
-        <li><a href="#" class="hover:text-black">Privacy</a></li>
-        <li><a href="#" class="hover:text-black">Terms</a></li>
-        <li><a href="#" class="hover:text-black">Contact</a></li>
-      </ul>
-    </div>
-
-    <div>
-      <h4 class="font-medium text-black mb-2">Follow Us</h4>
-      <div class="flex gap-4 text-xl">
-        📸 🎵
-      </div>
-    </div>
-  </div>
-
-  <p class="text-center text-xs text-gray-400 mt-8">
-    © 2025 SnapMusic. All rights reserved.
-  </p>
-</footer>
-
-</body>
-</html>
+</x-app-layout>

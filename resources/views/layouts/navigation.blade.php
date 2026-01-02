@@ -201,12 +201,18 @@
     @click.away="mobileMenuOpen = false"
     x-cloak
     class="absolute top-full left-0 right-0 m-4 p-6 bg-white shadow-xl rounded-2xl border border-gray-100 md:hidden flex flex-col gap-4 text-gray-600 z-50">
-    @if(request()->is('/'))
-      <a href="#" class="hover:text-black py-2 border-b border-gray-50" @click="mobileMenuOpen = false">Use Cases</a>
-      <a href="#" class="hover:text-black py-2 border-b border-gray-50" @click="mobileMenuOpen = false">How it Works</a>
+    @if(request()->is('/') || request()->is('how-it-works') || request()->is('use-cases'))
+        <x-nav-link :href="route('use-case.index')" :active="request()->routeIs('use-case.*')" @click="mobileMenuOpen = false">
+            {{ __('Use Cases') }}
+        </x-nav-link>
+        <x-nav-link :href="route('how-it-works.index')" :active="request()->routeIs('how-it-works.*')" @click="mobileMenuOpen = false">
+            {{ __('How it Works') }}
+        </x-nav-link>
     @endif
     @auth
-        <a href="{{ route('dashboard') }}" class="hover:text-black py-2 border-b border-gray-50" @click="mobileMenuOpen = false">Dashboard</a>
+        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" @click="mobileMenuOpen = false">
+            {{ __('Dashboard') }}
+        </x-nav-link>
     @endauth
     <a href="/videos" class="mt-2 px-4 py-3 rounded-full bg-gradient-to-r from-yellow-400 to-green-400 text-black font-medium text-center shadow-lg" @click="mobileMenuOpen = false">
       make a video
