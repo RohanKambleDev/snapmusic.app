@@ -104,18 +104,18 @@ function setStep(step) {
 	// Stepper UI
 	const active = (dot, label) => {
 		dot.className =
-			"h-9 w-9 rounded-full bg-yellow-500 text-black font-semibold flex items-center justify-center";
-		label.className = "text-sm text-white/90";
+			"h-8 w-8 md:h-9 md:w-9 rounded-full bg-yellow-500 text-black font-semibold flex items-center justify-center text-sm md:text-base";
+		label.className = "text-xs md:text-sm text-white/90";
 	};
 	const done = (dot, label) => {
 		dot.className =
-			"h-9 w-9 rounded-full bg-emerald-400/90 text-black font-semibold flex items-center justify-center";
-		label.className = "text-sm text-white/90";
+			"h-8 w-8 md:h-9 md:w-9 rounded-full bg-emerald-400/90 text-black font-semibold flex items-center justify-center text-sm md:text-base";
+		label.className = "text-xs md:text-sm text-white/90";
 	};
 	const idle = (dot, label) => {
 		dot.className =
-			"h-9 w-9 rounded-full bg-white/10 text-white/70 font-semibold flex items-center justify-center";
-		label.className = "text-sm text-white/70";
+			"h-8 w-8 md:h-9 md:w-9 rounded-full bg-white/10 text-white/70 font-semibold flex items-center justify-center text-sm md:text-base";
+		label.className = "text-xs md:text-sm text-white/70";
 	};
 
 	// Step states

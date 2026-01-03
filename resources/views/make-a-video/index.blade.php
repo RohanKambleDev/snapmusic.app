@@ -67,35 +67,35 @@
             </div>
 
             <!-- Stepper -->
-            <div class="mt-10 flex items-center justify-center">
+            <div class="mt-10 flex items-center justify-center px-4">
                 <div class="w-full max-w-2xl">
-                    <div class="flex items-center justify-center gap-4">
+                    <div class="flex items-center justify-center gap-2 sm:gap-4">
                         <!-- Step 1 -->
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2 sm:gap-3">
                             <div id="stepDot1"
-                                class="h-9 w-9 rounded-full bg-yellow-500 text-black font-semibold flex items-center justify-center">
+                                class="h-8 w-8 md:h-9 md:w-9 rounded-full bg-yellow-500 text-black font-semibold flex items-center justify-center text-sm md:text-base">
                                 1</div>
-                            <div id="stepLabel1" class="text-sm text-white/90">Image</div>
+                            <div id="stepLabel1" class="text-xs md:text-sm text-white/90">Image</div>
                         </div>
 
-                        <div class="h-px w-16 bg-white/15"></div>
+                        <div class="h-px w-6 sm:w-16 bg-white/15"></div>
 
                         <!-- Step 2 -->
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2 sm:gap-3">
                             <div id="stepDot2"
-                                class="h-9 w-9 rounded-full bg-white/10 text-white/70 font-semibold flex items-center justify-center">
+                                class="h-8 w-8 md:h-9 md:w-9 rounded-full bg-white/10 text-white/70 font-semibold flex items-center justify-center text-sm md:text-base">
                                 2</div>
-                            <div id="stepLabel2" class="text-sm text-white/70">Audio</div>
+                            <div id="stepLabel2" class="text-xs md:text-sm text-white/70">Audio</div>
                         </div>
 
-                        <div class="h-px w-16 bg-white/15"></div>
+                        <div class="h-px w-6 sm:w-16 bg-white/15"></div>
 
                         <!-- Step 3 -->
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2 sm:gap-3">
                             <div id="stepDot3"
-                                class="h-9 w-9 rounded-full bg-white/10 text-white/70 font-semibold flex items-center justify-center">
+                                class="h-8 w-8 md:h-9 md:w-9 rounded-full bg-white/10 text-white/70 font-semibold flex items-center justify-center text-sm md:text-base">
                                 3</div>
-                            <div id="stepLabel3" class="text-sm text-white/70">Create</div>
+                            <div id="stepLabel3" class="text-xs md:text-sm text-white/70">Create</div>
                         </div>
                     </div>
                 </div>
