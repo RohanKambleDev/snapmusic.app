@@ -31,12 +31,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Video routes
-    Route::get('/videos', [VideoController::class, 'index'])->name('videos.index');
-    Route::post('/videos/upload', [VideoController::class, 'upload'])->name('videos.upload');
-    Route::get('/videos/{videoJob}/status', [VideoController::class, 'status'])->name('videos.status');
-    Route::get('/videos/{videoJob}/download', [VideoController::class, 'download'])->name('videos.download');
-    Route::get('/videos/{videoJob}/stream', [VideoController::class, 'stream'])->name('videos.stream');
-    Route::delete('/videos/{videoJob}', [VideoController::class, 'destroy'])->name('videos.destroy');
+    Route::get('/make-a-video', [VideoController::class, 'index'])->name('make-a-video.index');
+    Route::post('/make-a-video/upload', [VideoController::class, 'upload'])->name('make-a-video.upload');
+    Route::get('/make-a-video/{videoJob}/status', [VideoController::class, 'status'])->name('make-a-video.status');
+    Route::get('/make-a-video/{videoJob}/download', [VideoController::class, 'download'])->name('make-a-video.download');
+    Route::get('/make-a-video/{videoJob}/stream', [VideoController::class, 'stream'])->name('make-a-video.stream');
+    Route::delete('/make-a-video/{videoJob}', [VideoController::class, 'destroy'])->name('make-a-video.destroy');
 });
 
 require __DIR__ . '/auth.php';

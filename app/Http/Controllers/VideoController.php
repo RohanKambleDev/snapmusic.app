@@ -18,7 +18,7 @@ class VideoController extends Controller
     {
         // Handle upload errors redirected from exception handler
         if (request()->has('upload_error') && request()->get('upload_error') == '413') {
-            return redirect()->route('videos.index')
+            return redirect()->route('make-a-video.index')
                 ->with('error', 'The uploaded files are too large. Maximum total size is ' . ini_get('post_max_size') . '.');
         }
 
@@ -26,7 +26,7 @@ class VideoController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('videos.index', compact('jobs'));
+        return view('make-a-video.index', compact('jobs'));
     }
 
     /**
@@ -68,7 +68,7 @@ class VideoController extends Controller
             }
 
             return redirect()
-                ->route('videos.index')
+                ->route('make-a-video.index')
                 ->with('success', 'Your video is being processed! You will see it here once it\'s ready.');
 
         } catch (\Exception $e) {
@@ -205,7 +205,7 @@ class VideoController extends Controller
         $videoJob->delete();
 
         return redirect()
-            ->route('videos.index')
+            ->route('make-a-video.index')
             ->with('success', 'Video deleted successfully');
     }
 }

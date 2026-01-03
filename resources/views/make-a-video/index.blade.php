@@ -70,7 +70,7 @@
 
             <!-- Panels -->
             <div class="mt-10 flex justify-center">
-                <form id="uploadForm" action="{{ route('videos.upload') }}" method="POST" enctype="multipart/form-data" class="w-full max-w-3xl">
+                <form id="uploadForm" action="{{ route('make-a-video.upload') }}" method="POST" enctype="multipart/form-data" class="w-full max-w-3xl">
                     @csrf
                     
                     <!-- STEP 1: IMAGE -->
@@ -341,15 +341,15 @@
                                     </td>
                                     <td class="px-6 py-4 font-medium space-x-2 actions-cell">
                                         @if ($job->isCompleted())
-                                            <a href="{{ route('videos.download', $job) }}" class="text-emerald-400 hover:text-emerald-300">Download</a>
-                                            <a href="{{ route('videos.stream', $job) }}" target="_blank" class="text-blue-400 hover:text-blue-300">Preview</a>
+                                            <a href="{{ route('make-a-video.download', $job) }}" class="text-emerald-400 hover:text-emerald-300">Download</a>
+                                            <a href="{{ route('make-a-video.stream', $job) }}" target="_blank" class="text-blue-400 hover:text-blue-300">Preview</a>
                                         @endif
                                         
                                         @if ($job->isFailed())
                                             <span class="text-red-400 cursor-help" title="{{ $job->error_message }}">Error</span>
                                         @endif
 
-                                        <form action="{{ route('videos.destroy', $job) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this video?');">
+                                        <form action="{{ route('make-a-video.destroy', $job) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this video?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-400 hover:text-red-300">Delete</button>

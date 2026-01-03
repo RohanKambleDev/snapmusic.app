@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Dashboard') }}
             </h2>
-            <a href="{{ route('videos.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <a href="{{ route('make-a-video.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                 {{ __('Create New Video') }}
             </a>
         </div>
@@ -81,15 +81,15 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium actions-cell">
                                                 <div class="flex items-center gap-3">
                                                     @if ($job->isCompleted())
-                                                        <a href="{{ route('videos.download', $job) }}" class="text-indigo-600 hover:text-indigo-900">Download</a>
-                                                        <a href="{{ route('videos.stream', $job) }}" target="_blank" class="text-gray-600 hover:text-gray-900">Preview</a>
+                                                        <a href="{{ route('make-a-video.download', $job) }}" class="text-indigo-600 hover:text-indigo-900">Download</a>
+                                                        <a href="{{ route('make-a-video.stream', $job) }}" target="_blank" class="text-gray-600 hover:text-gray-900">Preview</a>
                                                     @endif
                                                     
                                                     @if ($job->isFailed())
                                                         <span class="text-red-600 cursor-help" title="{{ $job->error_message }}">Error</span>
                                                     @endif
 
-                                                    <form action="{{ route('videos.destroy', $job) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this video?');">
+                                                    <form action="{{ route('make-a-video.destroy', $job) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this video?');">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
@@ -110,7 +110,7 @@
                             @if(request('date'))
                                 <a href="{{ route('dashboard') }}" class="text-indigo-600 hover:text-indigo-900 mt-2 inline-block">Clear filters</a>
                             @else
-                                <a href="{{ route('videos.index') }}" class="text-indigo-600 hover:text-indigo-900 mt-2 inline-block">Create your first video</a>
+                                <a href="{{ route('make-a-video.index') }}" class="text-indigo-600 hover:text-indigo-900 mt-2 inline-block">Create your first video</a>
                             @endif
                         </div>
                     @endif
