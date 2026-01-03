@@ -26,7 +26,11 @@ class VideoController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('make-a-video.index', compact('jobs'));
+        if (isset($jobs)) {
+            $processingJobs = json_encode($jobs->whereIn('status', ['pending', 'processing'])->pluck('id')->toArray());
+        }
+
+        return view('make-a-video.index', compact('jobs', 'processingJobs'));
     }
 
     /**
