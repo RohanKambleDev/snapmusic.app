@@ -145,6 +145,9 @@
                                     class="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-emerald-400/30 transition">
                                 </div>
                             </div>
+                            <div id="imageError" class="mt-2 text-center text-sm text-red-400">
+                                @error('image') {{ $message }} @enderror
+                            </div>
 
                             <div class="mt-8 flex items-center justify-between">
                                 <div class="text-xs text-white/35">Step 1 of 3</div>
@@ -221,6 +224,9 @@
                                 <div id="audioDropHint"
                                     class="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-emerald-400/30 transition">
                                 </div>
+                            </div>
+                            <div id="audioError" class="mt-2 text-center text-sm text-red-400">
+                                @error('audio') {{ $message }} @enderror
                             </div>
 
                             <div class="mt-8 flex items-center justify-between">
@@ -508,12 +514,40 @@
         }
 
         function setImage(file) {
+            const errorEl = document.getElementById('imageError');
+            if (errorEl) errorEl.textContent = '';
+
             if (!file) return;
 
-            // Validate
+            // Validate type
             const ok = ['image/jpeg', 'image/png'].includes(file.type);
             if (!ok) {
-                alert('Please upload a JPG or PNG image.');
+                if (errorEl) errorEl.textContent = 'Please upload a JPG or PNG image.';
+                
+                // Manual cleanup to preserve error
+                imageInput.value = '';
+                if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
+                state.imageFile = null;
+                state.imageUrl = null;
+                imageEmpty.classList.remove('hidden');
+                imagePreviewWrap.classList.add('hidden');
+                toStep2.disabled = true;
+                return;
+            }
+
+            // Validate size (2MB)
+            const MAX_SIZE = 2 * 1024 * 1024;
+            if (file.size > MAX_SIZE) {
+                if (errorEl) errorEl.textContent = 'The image file size must not exceed 2MB.';
+                
+                // Manual cleanup to preserve error
+                imageInput.value = '';
+                if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
+                state.imageFile = null;
+                state.imageUrl = null;
+                imageEmpty.classList.remove('hidden');
+                imagePreviewWrap.classList.add('hidden');
+                toStep2.disabled = true;
                 return;
             }
 
@@ -532,6 +566,9 @@
         }
 
         function clearImage() {
+            const errorEl = document.getElementById('imageError');
+            if (errorEl) errorEl.textContent = '';
+
             if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
             state.imageFile = null;
             state.imageUrl = null;
@@ -546,11 +583,30 @@
         }
 
         function setAudio(file) {
+            const errorEl = document.getElementById('audioError');
+            if (errorEl) errorEl.textContent = '';
+
             if (!file) return;
 
-            // Basic validate
-            if (!file.type.startsWith('audio/')) {
-                // simple check, strict validation on backend
+            // Basic validate type
+            if (!file.type.startsWith('audio/') && !file.name.endsWith('.mp3') && !file.name.endsWith('.wav')) {
+                 // Relaxed check, just ensuring it's audio-ish if type is missing/weird
+            }
+
+             // Validate size (2MB)
+            const MAX_SIZE = 2 * 1024 * 1024;
+            if (file.size > MAX_SIZE) {
+                if (errorEl) errorEl.textContent = 'The audio file size must not exceed 2MB.';
+                
+                // Manual cleanup to preserve error
+                audioInput.value = '';
+                if (state.audioUrl) URL.revokeObjectURL(state.audioUrl);
+                state.audioFile = null;
+                state.audioUrl = null;
+                audioEmpty.classList.remove('hidden');
+                audioPreviewWrap.classList.add('hidden');
+                toStep3.disabled = true;
+                return;
             }
 
             if (state.audioUrl) URL.revokeObjectURL(state.audioUrl);
@@ -567,6 +623,9 @@
         }
 
         function clearAudio() {
+            const errorEl = document.getElementById('audioError');
+            if (errorEl) errorEl.textContent = '';
+
             if (state.audioUrl) URL.revokeObjectURL(state.audioUrl);
             state.audioFile = null;
             state.audioUrl = null;
