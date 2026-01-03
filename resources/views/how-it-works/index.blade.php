@@ -110,7 +110,7 @@
               <span class="text-brandPurple text-xl">🗑️</span> Auto-cleanup of source files
             </li>
           </ul>
-          <a href="/videos" class="inline-block mt-6 px-6 py-3 bg-brandPurple text-white rounded-lg font-semibold hover:opacity-90 transition">
+          <a href="make-a-video" class="inline-block mt-6 px-6 py-3 bg-brandPurple text-white rounded-lg font-semibold hover:opacity-90 transition">
             Start Creating Now
           </a>
         </div>

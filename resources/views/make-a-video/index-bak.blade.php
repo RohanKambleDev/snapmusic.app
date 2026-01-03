@@ -200,7 +200,7 @@
 
             for (const jobId of jobsToCheck) {
                 try {
-                    const response = await fetch(`/videos/${jobId}/status`, {
+                    const response = await fetch(`make-a-video/${jobId}/status`, {
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
                             'Accept': 'application/json'
@@ -264,9 +264,9 @@
             const actionsCell = row.querySelector('.actions-cell');
             if (actionsCell && data.status === 'completed') {
                 actionsCell.innerHTML = `
-                    <a href="/videos/${jobId}/download" class="text-blue-600 hover:text-blue-900">Download</a>
-                    <a href="/videos/${jobId}/stream" target="_blank" class="text-green-600 hover:text-green-900">Preview</a>
-                    <form action="/videos/${jobId}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this video?');">
+                    <a href="make-a-video/${jobId}/download" class="text-blue-600 hover:text-blue-900">Download</a>
+                    <a href="make-a-video/${jobId}/stream" target="_blank" class="text-green-600 hover:text-green-900">Preview</a>
+                    <form action="make-a-video/${jobId}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this video?');">
                         <input type="hidden" name="_token" value="${document.querySelector('meta[name=csrf-token]').content}">
                         <input type="hidden" name="_method" value="DELETE">
                         <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
@@ -276,7 +276,7 @@
                 const errorTitle = data.error_message ? data.error_message.substring(0, 100) : 'Processing failed';
                 actionsCell.innerHTML = `
                     <span class="text-red-600" title="${errorTitle}">Error</span>
-                    <form action="/videos/${jobId}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this video?');">
+                    <form action="make-a-video/${jobId}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this video?');">
                         <input type="hidden" name="_token" value="${document.querySelector('meta[name=csrf-token]').content}">
                         <input type="hidden" name="_method" value="DELETE">
                         <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>

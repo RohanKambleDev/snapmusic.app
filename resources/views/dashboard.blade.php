@@ -140,7 +140,7 @@
 
             for (const jobId of [...jobs]) {
                 try {
-                    const res = await fetch(`/videos/${jobId}/status`);
+                    const res = await fetch(`make-a-video/${jobId}/status`);
                     if (!res.ok) continue;
                     const data = await res.json();
 

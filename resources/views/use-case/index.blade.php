@@ -32,7 +32,7 @@
             <li class="flex items-center gap-2">✅ Create YouTube Art Tracks</li>
             <li class="flex items-center gap-2">✅ Tease new releases on TikTok</li>
           </ul>
-          <a href="/videos" class="text-brandPurple font-semibold hover:underline">Start creating &rarr;</a>
+          <a href="make-a-video" class="text-brandPurple font-semibold hover:underline">Start creating &rarr;</a>
         </div>
       </div>
 
@@ -51,7 +51,7 @@
             <li class="flex items-center gap-2">✅ Share funny or insightful clips</li>
             <li class="flex items-center gap-2">✅ Grow your audience on visual platforms</li>
           </ul>
-          <a href="/videos" class="text-yellow-600 font-semibold hover:underline">Start creating &rarr;</a>
+          <a href="make-a-video" class="text-yellow-600 font-semibold hover:underline">Start creating &rarr;</a>
         </div>
       </div>
 
@@ -70,7 +70,7 @@
             <li class="flex items-center gap-2">✅ Language pronunciation guides</li>
             <li class="flex items-center gap-2">✅ Mini-lectures for social media</li>
           </ul>
-          <a href="/videos" class="text-brandGreen font-semibold hover:underline">Start creating &rarr;</a>
+          <a href="make-a-video" class="text-brandGreen font-semibold hover:underline">Start creating &rarr;</a>
         </div>
       </div>
 
@@ -89,7 +89,7 @@
             <li class="flex items-center gap-2">✅ Customer testimonials</li>
             <li class="flex items-center gap-2">✅ Event announcements</li>
           </ul>
-          <a href="/videos" class="text-blue-600 font-semibold hover:underline">Start creating &rarr;</a>
+          <a href="make-a-video" class="text-blue-600 font-semibold hover:underline">Start creating &rarr;</a>
         </div>
       </div>
 
@@ -104,7 +104,7 @@
     <p class="text-gray-400 mb-10 text-lg">
       Join thousands of creators sharing their audio in a whole new way.
     </p>
-    <a href="/videos" class="inline-block px-8 py-4 rounded-full font-semibold text-gray-900 bg-gradient-to-r from-yellow-400 via-green-400 to-purple-500 hover:opacity-90 transition transform hover:scale-105">
+    <a href="make-a-video" class="inline-block px-8 py-4 rounded-full font-semibold text-gray-900 bg-gradient-to-r from-yellow-400 via-green-400 to-purple-500 hover:opacity-90 transition transform hover:scale-105">
       🚀 Create Your Video Now
     </a>
   </div>

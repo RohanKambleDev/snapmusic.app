@@ -780,7 +780,7 @@
 
             for (const jobId of jobsToCheck) {
                 try {
-                    const response = await fetch(`/videos/${jobId}/status`, {
+                    const response = await fetch(`make-a-video/${jobId}/status`, {
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
                             'Accept': 'application/json'

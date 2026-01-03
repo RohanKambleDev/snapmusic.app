@@ -17,15 +17,17 @@
     </p>
 
     <div class="mt-8 flex flex-wrap gap-4">
-      <button class="px-6 py-3 rounded-full font-semibold text-white
-        bg-gradient-to-r from-yellow-400 via-green-400 to-purple-500
-        hover:opacity-90 transition">
-        ⚡ Create Video Now
-      </button>
+        <a href="/make-a-video">
+            <button class="px-6 py-3 rounded-full font-semibold text-white
+            bg-gradient-to-r from-yellow-400 via-green-400 to-purple-500
+            hover:opacity-90 transition">
+                ⚡ Create Video Now
+            </button>
+        </a>
 
-      <button class="px-6 py-3 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 transition">
+      {{-- <button class="px-6 py-3 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 transition">
         ⬇ Download App
-      </button>
+      </button> --}}
     </div>
   </div>
 
@@ -112,10 +114,12 @@
       </div>
     </div>
 
-    <button class="mt-10 px-8 py-3 rounded-full text-white font-semibold
-      bg-gradient-to-r from-yellow-400 via-green-400 to-purple-500 hover:opacity-90">
-      ⚡ Start Creating Now
-    </button>
+    <a href="/make-a-video">
+        <button class="mt-10 px-8 py-3 rounded-full text-white font-semibold
+        bg-gradient-to-r from-yellow-400 via-green-400 to-purple-500 hover:opacity-90">
+            ⚡ Start Creating Now
+        </button>
+    </a>
   </div>
 </section>
 
