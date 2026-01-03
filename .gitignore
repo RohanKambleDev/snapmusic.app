@@ -3,3 +3,7 @@
 GEMINI.md
 GEMINI-bak.md
 /storage
+/public/build
+/node_modules
+/vendor
+.DS_Store
