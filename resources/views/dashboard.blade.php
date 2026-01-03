@@ -13,6 +13,68 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
+            <!-- Notifications -->
+            <div class="mb-8" x-data="{ showSuccess: true, showCompleted: true, showError: true, showErrors: true }">
+                @if (session('success'))
+                    <div x-show="showSuccess" class="relative rounded-xl bg-green-500/10 border border-green-500/20 p-4 text-green-800 mb-4 shadow-sm">
+                        <div class="pr-8">{{ session('success') }}</div>
+                        <button @click="showSuccess = false" class="absolute top-4 right-4 text-green-600 hover:text-green-800">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                @endif
+
+                @if (session('video_completed'))
+                    @php $data = session('video_completed'); @endphp
+                    <div x-show="showCompleted" class="relative rounded-xl bg-emerald-50 border border-emerald-200 p-5 text-emerald-900 mb-4 flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 border border-emerald-200">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-lg leading-tight">Your video is ready!</p>
+                                <p class="text-emerald-700/80 text-sm mt-0.5">Video #{{ $data['id'] }} has been processed successfully.</p>
+                                <div class="mt-3 flex gap-4 text-sm font-semibold">
+                                    <a href="{{ $data['download_url'] }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition shadow-sm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                        Download MP4
+                                    </a>
+                                    <a href="{{ $data['stream_url'] }}" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-gray-50 text-gray-700 transition border border-gray-200 shadow-sm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        Preview
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <button @click="showCompleted = false" class="text-emerald-400 hover:text-emerald-600 p-2 rounded-lg hover:bg-emerald-100 transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div x-show="showError" class="relative rounded-xl bg-red-50 border border-red-100 p-4 text-red-800 mb-4 shadow-sm">
+                        <div class="pr-8">{{ session('error') }}</div>
+                        <button @click="showError = false" class="absolute top-4 right-4 text-red-400 hover:text-red-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div x-show="showErrors" class="relative rounded-xl bg-red-50 border border-red-100 p-4 text-red-800 mb-4 shadow-sm">
+                        <ul class="list-disc list-inside pr-8">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button @click="showErrors = false" class="absolute top-4 right-4 text-red-400 hover:text-red-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                @endif
+            </div>
+
             <!-- Filters -->
             <div class="mb-6 flex justify-end">
                 <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-2">
@@ -140,7 +202,7 @@
 
             for (const jobId of [...jobs]) {
                 try {
-                    const res = await fetch(`make-a-video/${jobId}/status`);
+                    const res = await fetch(`/make-a-video/${jobId}/status`);
                     if (!res.ok) continue;
                     const data = await res.json();
 
@@ -150,9 +212,22 @@
                         const idx = jobs.indexOf(jobId);
                         if (idx > -1) jobs.splice(idx, 1);
                         
+                        // If completed, trigger session flash
+                        if (data.status === 'completed') {
+                            try {
+                                await fetch(`/make-a-video/${jobId}/notify-completion`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    }
+                                });
+                            } catch (e) { console.error('Notify failed', e); }
+                        }
+
                         // If all done, reload to ensure full UI sync (optional)
                         if (jobs.length === 0) {
-                            setTimeout(() => location.reload(), 1000);
+                            setTimeout(() => location.reload(), 500);
                         }
                     }
                 } catch (e) {

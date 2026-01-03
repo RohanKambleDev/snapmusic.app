@@ -94,6 +94,26 @@ class VideoController extends Controller
     }
 
     /**
+     * Set a session flash message for a completed job
+     */
+    public function notifyCompletion(VideoJob $videoJob)
+    {
+        if ($videoJob->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($videoJob->status === 'completed') {
+            session()->flash('video_completed', [
+                'id' => $videoJob->id,
+                'download_url' => route('make-a-video.download', $videoJob),
+                'stream_url' => route('make-a-video.stream', $videoJob),
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
      * Show the status of a specific video job
      */
     public function status(VideoJob $videoJob)

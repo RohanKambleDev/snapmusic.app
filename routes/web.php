@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/make-a-video', [VideoController::class, 'index'])->name('make-a-video.index');
     Route::post('/make-a-video/upload', [VideoController::class, 'upload'])->name('make-a-video.upload');
     Route::get('/make-a-video/{videoJob}/status', [VideoController::class, 'status'])->name('make-a-video.status');
+    Route::post('/make-a-video/{videoJob}/notify-completion', [VideoController::class, 'notifyCompletion'])->name('make-a-video.notify-completion');
     Route::get('/make-a-video/{videoJob}/download', [VideoController::class, 'download'])->name('make-a-video.download');
     Route::get('/make-a-video/{videoJob}/stream', [VideoController::class, 'stream'])->name('make-a-video.stream');
     Route::delete('/make-a-video/{videoJob}', [VideoController::class, 'destroy'])->name('make-a-video.destroy');
