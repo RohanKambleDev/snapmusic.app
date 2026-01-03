@@ -29,6 +29,6 @@
   </div>
 
   <p class="text-center text-xs text-gray-400 mt-8">
-    © 2025 SnapMusic. All rights reserved.
+    Copyright &copy; <script>document.write(/\d{4}/.exec(Date())[0])</script> SnapMusic. All rights reserved.
   </p>
 </footer>
