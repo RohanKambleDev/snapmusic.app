@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/make-a-video/{videoJob}/notify-completion', [VideoController::class, 'notifyCompletion'])->name('make-a-video.notify-completion');
     Route::get('/make-a-video/{videoJob}/download', [VideoController::class, 'download'])->name('make-a-video.download');
     Route::get('/make-a-video/{videoJob}/stream', [VideoController::class, 'stream'])->name('make-a-video.stream');
+    Route::get('/make-a-video/{videoJob}/thumbnail', [VideoController::class, 'thumbnail'])->name('make-a-video.thumbnail');
     Route::delete('/make-a-video/{videoJob}', [VideoController::class, 'destroy'])->name('make-a-video.destroy');
 });
 

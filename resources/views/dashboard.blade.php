@@ -97,6 +97,7 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thumbnail</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -107,6 +108,15 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach ($jobs as $job)
                                         <tr data-job-id="{{ $job->id }}">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                @if($job->thumbnail_path)
+                                                    <img src="{{ route('make-a-video.thumbnail', $job) }}" alt="Video Thumbnail" class="h-16 w-28 object-cover rounded-md border border-gray-200">
+                                                @else
+                                                    <div class="h-16 w-28 bg-gray-100 rounded-md border border-gray-200 flex items-center justify-center text-gray-400">
+                                                        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                    </div>
+                                                @endif
+                                            </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 #{{ $job->id }}
                                             </td>
