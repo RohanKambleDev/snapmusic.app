@@ -417,7 +417,7 @@
 
     @push('scripts')
         <script>
-            window.processingJobs = {!! $processingJobs ?? '[]' !!};
+            window.processingJobs = @json(json_decode($processingJobs ?? '[]'));
         </script>
         @vite(['resources/js/make-a-video.js', 'resources/js/job-status.js'])
     @endpush
