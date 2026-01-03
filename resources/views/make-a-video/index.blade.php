@@ -349,7 +349,7 @@
             </div>
 
             <!-- Your Videos List -->
-            @if(isset($jobs) && $jobs->count() > 0)
+            {{-- @if(isset($jobs) && $jobs->count() > 0)
             <div class="mt-16 border-t border-white/10 pt-10">
                 <h3 class="text-xl font-semibold mb-6">Your Videos</h3>
                 <div class="overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03]">
@@ -410,7 +410,7 @@
                     {{ $jobs->links() }}
                 </div>
             </div>
-            @endif
+            @endif --}}
 
         </div>
     </div>
