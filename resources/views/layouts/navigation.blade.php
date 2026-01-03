@@ -116,8 +116,7 @@
 <header class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between relative z-50">
   <div class="flex items-center gap-2 font-semibold text-lg">
     <a href="/" class="flex items-center gap-2 hover:text-black">
-        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-600"></div>
-        <span>SnapMusic</span>
+        <x-application-logo class="w-20 h-20 fill-current text-black" />
     </a>
   </div>
 

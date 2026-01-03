@@ -4,8 +4,9 @@
 
     <div>
       <div class="flex items-center gap-2 font-semibold text-black mb-2">
-        <div class="w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-emerald-600"></div>
-        SnapMusic
+        <a href="/" class="flex items-center gap-2 hover:text-black">
+            <x-application-logo class="w-20 h-20 fill-current text-black" />
+        </a>
       </div>
       Made for creators, big and small.
     </div>
