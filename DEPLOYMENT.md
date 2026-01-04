@@ -138,13 +138,14 @@ This command will:
 Nginx runs as `www-data`. It needs write access to storage and cache.
 
 ```bash
-# 1. Set ownership of the specific writable directories
+# 1. Set base ownership (deployer user + web group)
+sudo chown -R rohan:www-data /data/snapmusic/
+
+# 2. Set strict ownership for writable directories
 sudo chown -R www-data:www-data /data/snapmusic/storage
 sudo chown -R www-data:www-data /data/snapmusic/bootstrap/cache
 
-sudo chown -R rohan:www-data /data/snapmusic/
-
-# 2. Set directory permissions
+# 3. Set directory permissions
 sudo chmod -R 775 /data/snapmusic/storage
 sudo chmod -R 775 /data/snapmusic/bootstrap/cache
 ```
