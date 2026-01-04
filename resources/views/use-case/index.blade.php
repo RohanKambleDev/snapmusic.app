@@ -1,40 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>SnapMusic – Use Cases</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Alpine.js -->
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-  <style>
-    [x-cloak] { display: none !important; }
-  </style>
-
-  <!-- Tailwind config -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brandGreen: '#22c55e',
-            brandYellow: '#facc15',
-            brandPurple: '#a855f7',
-          }
-        }
-      }
-    }
-  </script>
-</head>
-
-<body class="bg-white text-gray-900">
-
-<!-- ================= HEADER ================= -->
-@include('layouts.navigation')
+<x-app-layout>
 
 <!-- ================= HERO ================= -->
 <section class="bg-gray-50 py-20">
@@ -68,7 +32,7 @@
             <li class="flex items-center gap-2">✅ Create YouTube Art Tracks</li>
             <li class="flex items-center gap-2">✅ Tease new releases on TikTok</li>
           </ul>
-          <a href="/videos" class="text-brandPurple font-semibold hover:underline">Start creating &rarr;</a>
+          <a href="make-a-video" class="text-brandPurple font-semibold hover:underline">Start creating &rarr;</a>
         </div>
       </div>
 
@@ -87,7 +51,7 @@
             <li class="flex items-center gap-2">✅ Share funny or insightful clips</li>
             <li class="flex items-center gap-2">✅ Grow your audience on visual platforms</li>
           </ul>
-          <a href="/videos" class="text-yellow-600 font-semibold hover:underline">Start creating &rarr;</a>
+          <a href="make-a-video" class="text-yellow-600 font-semibold hover:underline">Start creating &rarr;</a>
         </div>
       </div>
 
@@ -106,7 +70,7 @@
             <li class="flex items-center gap-2">✅ Language pronunciation guides</li>
             <li class="flex items-center gap-2">✅ Mini-lectures for social media</li>
           </ul>
-          <a href="/videos" class="text-brandGreen font-semibold hover:underline">Start creating &rarr;</a>
+          <a href="make-a-video" class="text-brandGreen font-semibold hover:underline">Start creating &rarr;</a>
         </div>
       </div>
 
@@ -125,7 +89,7 @@
             <li class="flex items-center gap-2">✅ Customer testimonials</li>
             <li class="flex items-center gap-2">✅ Event announcements</li>
           </ul>
-          <a href="/videos" class="text-blue-600 font-semibold hover:underline">Start creating &rarr;</a>
+          <a href="make-a-video" class="text-blue-600 font-semibold hover:underline">Start creating &rarr;</a>
         </div>
       </div>
 
@@ -140,45 +104,9 @@
     <p class="text-gray-400 mb-10 text-lg">
       Join thousands of creators sharing their audio in a whole new way.
     </p>
-    <a href="/videos" class="inline-block px-8 py-4 rounded-full font-semibold text-gray-900 bg-gradient-to-r from-yellow-400 via-green-400 to-purple-500 hover:opacity-90 transition transform hover:scale-105">
+    <a href="make-a-video" class="inline-block px-8 py-4 rounded-full font-semibold text-gray-900 bg-gradient-to-r from-yellow-400 via-green-400 to-purple-500 hover:opacity-90 transition transform hover:scale-105">
       🚀 Create Your Video Now
     </a>
   </div>
 </section>
-
-<!-- ================= FOOTER ================= -->
-<footer class="border-t py-10">
-  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-sm text-gray-600">
-
-    <div>
-      <div class="flex items-center gap-2 font-semibold text-black mb-2">
-        <x-application-logo class="w-6 h-6" />
-        SnapMusic
-      </div>
-      Made for creators, big and small.
-    </div>
-
-    <div>
-      <h4 class="font-medium text-black mb-2">Quick Links</h4>
-      <ul class="space-y-1">
-        <li><a href="#" class="hover:text-black">Privacy</a></li>
-        <li><a href="#" class="hover:text-black">Terms</a></li>
-        <li><a href="#" class="hover:text-black">Contact</a></li>
-      </ul>
-    </div>
-
-    <div>
-      <h4 class="font-medium text-black mb-2">Follow Us</h4>
-      <div class="flex gap-4 text-xl">
-        📸 🎵
-      </div>
-    </div>
-  </div>
-
-  <p class="text-center text-xs text-gray-400 mt-8">
-    © 2025 SnapMusic. All rights reserved.
-  </p>
-</footer>
-
-</body>
-</html>
+</x-app-layout>

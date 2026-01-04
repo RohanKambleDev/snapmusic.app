@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Dashboard') }}
             </h2>
-            <a href="{{ route('videos.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <a href="{{ route('make-a-video.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                 {{ __('Create New Video') }}
             </a>
         </div>
@@ -13,6 +13,68 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
+            <!-- Notifications -->
+            <div class="mb-8" x-data="{ showSuccess: true, showCompleted: true, showError: true, showErrors: true }">
+                @if (session('success'))
+                    <div x-show="showSuccess" class="relative rounded-xl bg-green-500/10 border border-green-500/20 p-4 text-green-800 mb-4 shadow-sm">
+                        <div class="pr-8">{{ session('success') }}</div>
+                        <button @click="showSuccess = false" class="absolute top-4 right-4 text-green-600 hover:text-green-800">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                @endif
+
+                @if (session('video_completed'))
+                    @php $data = session('video_completed'); @endphp
+                    <div x-show="showCompleted" class="relative rounded-xl bg-emerald-50 border border-emerald-200 p-5 text-emerald-900 mb-4 flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 border border-emerald-200">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-lg leading-tight">Your video is ready!</p>
+                                <p class="text-emerald-700/80 text-sm mt-0.5">Video #{{ $data['id'] }} has been processed successfully.</p>
+                                <div class="mt-3 flex gap-4 text-sm font-semibold">
+                                    <a href="{{ $data['download_url'] }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition shadow-sm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                        Download MP4
+                                    </a>
+                                    <a href="{{ $data['stream_url'] }}" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-gray-50 text-gray-700 transition border border-gray-200 shadow-sm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        Preview
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <button @click="showCompleted = false" class="text-emerald-400 hover:text-emerald-600 p-2 rounded-lg hover:bg-emerald-100 transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div x-show="showError" class="relative rounded-xl bg-red-50 border border-red-100 p-4 text-red-800 mb-4 shadow-sm">
+                        <div class="pr-8">{{ session('error') }}</div>
+                        <button @click="showError = false" class="absolute top-4 right-4 text-red-400 hover:text-red-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div x-show="showErrors" class="relative rounded-xl bg-red-50 border border-red-100 p-4 text-red-800 mb-4 shadow-sm">
+                        <ul class="list-disc list-inside pr-8">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button @click="showErrors = false" class="absolute top-4 right-4 text-red-400 hover:text-red-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                @endif
+            </div>
+
             <!-- Filters -->
             <div class="mb-6 flex justify-end">
                 <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-2">
@@ -35,6 +97,7 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thumbnail</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -45,6 +108,15 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach ($jobs as $job)
                                         <tr data-job-id="{{ $job->id }}">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                @if($job->thumbnail_path)
+                                                    <img src="{{ route('make-a-video.thumbnail', $job) }}" alt="Video Thumbnail" class="h-16 w-28 object-cover rounded-md border border-gray-200">
+                                                @else
+                                                    <div class="h-16 w-28 bg-gray-100 rounded-md border border-gray-200 flex items-center justify-center text-gray-400">
+                                                        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                    </div>
+                                                @endif
+                                            </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 #{{ $job->id }}
                                             </td>
@@ -81,15 +153,15 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium actions-cell">
                                                 <div class="flex items-center gap-3">
                                                     @if ($job->isCompleted())
-                                                        <a href="{{ route('videos.download', $job) }}" class="text-indigo-600 hover:text-indigo-900">Download</a>
-                                                        <a href="{{ route('videos.stream', $job) }}" target="_blank" class="text-gray-600 hover:text-gray-900">Preview</a>
+                                                        <a href="{{ route('make-a-video.download', $job) }}" class="text-indigo-600 hover:text-indigo-900">Download</a>
+                                                        <a href="{{ route('make-a-video.stream', $job) }}" target="_blank" class="text-gray-600 hover:text-gray-900">Preview</a>
                                                     @endif
                                                     
                                                     @if ($job->isFailed())
                                                         <span class="text-red-600 cursor-help" title="{{ $job->error_message }}">Error</span>
                                                     @endif
 
-                                                    <form action="{{ route('videos.destroy', $job) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this video?');">
+                                                    <form action="{{ route('make-a-video.destroy', $job) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this video?');">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
@@ -110,7 +182,7 @@
                             @if(request('date'))
                                 <a href="{{ route('dashboard') }}" class="text-indigo-600 hover:text-indigo-900 mt-2 inline-block">Clear filters</a>
                             @else
-                                <a href="{{ route('videos.index') }}" class="text-indigo-600 hover:text-indigo-900 mt-2 inline-block">Create your first video</a>
+                                <a href="{{ route('make-a-video.index') }}" class="text-indigo-600 hover:text-indigo-900 mt-2 inline-block">Create your first video</a>
                             @endif
                         </div>
                     @endif
@@ -121,87 +193,8 @@
 
     @push('scripts')
     <script>
-        // Poll for status updates
-        document.addEventListener('DOMContentLoaded', () => {
-            const processingJobs = @json($jobs->whereIn('status', ['pending', 'processing'])->pluck('id')->toArray());
-
-            if (processingJobs.length > 0) {
-                const interval = setInterval(() => {
-                    checkStatuses(processingJobs, interval);
-                }, 3000);
-            }
-        });
-
-        async function checkStatuses(jobs, interval) {
-            if (jobs.length === 0) {
-                clearInterval(interval);
-                return;
-            }
-
-            for (const jobId of [...jobs]) {
-                try {
-                    const res = await fetch(`/videos/${jobId}/status`);
-                    if (!res.ok) continue;
-                    const data = await res.json();
-
-                    updateRow(jobId, data);
-
-                    if (data.status === 'completed' || data.status === 'failed') {
-                        const idx = jobs.indexOf(jobId);
-                        if (idx > -1) jobs.splice(idx, 1);
-                        
-                        // If all done, reload to ensure full UI sync (optional)
-                        if (jobs.length === 0) {
-                            setTimeout(() => location.reload(), 1000);
-                        }
-                    }
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-        }
-
-        function updateRow(jobId, data) {
-            const row = document.querySelector(`tr[data-job-id="${jobId}"]`);
-            if (!row) return;
-
-            // Update status
-            const statusCell = row.querySelector('.status-cell');
-            if (statusCell) {
-                let html = '';
-                if (data.status === 'pending') {
-                    html = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>';
-                } else if (data.status === 'processing') {
-                    html = `
-                        <div class="w-full max-w-xs">
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="text-xs font-medium text-blue-700">Processing...</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                <div class="bg-blue-600 h-1.5 rounded-full animate-pulse" style="width: 100%"></div>
-                            </div>
-                        </div>`;
-                } else if (data.status === 'completed') {
-                    html = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Completed</span>';
-                } else if (data.status === 'failed') {
-                    html = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Failed</span>';
-                }
-                statusCell.innerHTML = html;
-            }
-
-            // Update duration
-            if (data.duration) {
-                const durationCell = row.querySelector('.duration-cell');
-                if (durationCell) {
-                    const mins = Math.floor(data.duration / 60).toString().padStart(2, '0');
-                    const secs = (data.duration % 60).toString().padStart(2, '0');
-                    durationCell.textContent = `${mins}:${secs}`;
-                }
-            }
-            
-            // Actions are harder to update dynamically without reconstructing the whole cell with CSRF tokens etc.
-            // Relying on the reload in checkStatuses for final action buttons.
-        }
+        window.processingJobs = @json($jobs->whereIn('status', ['pending', 'processing'])->pluck('id')->toArray());
     </script>
+    @vite(['resources/js/job-status.js'])
     @endpush
 </x-app-layout>

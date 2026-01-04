@@ -18,7 +18,7 @@ class VideoController extends Controller
     {
         // Handle upload errors redirected from exception handler
         if (request()->has('upload_error') && request()->get('upload_error') == '413') {
-            return redirect()->route('videos.index')
+            return redirect()->route('make-a-video.index')
                 ->with('error', 'The uploaded files are too large. Maximum total size is ' . ini_get('post_max_size') . '.');
         }
 
@@ -26,7 +26,11 @@ class VideoController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('videos.index', compact('jobs'));
+        if (isset($jobs)) {
+            $processingJobs = json_encode($jobs->whereIn('status', ['pending', 'processing'])->pluck('id')->toArray());
+        }
+
+        return view('make-a-video.index', compact('jobs', 'processingJobs'));
     }
 
     /**
@@ -68,7 +72,7 @@ class VideoController extends Controller
             }
 
             return redirect()
-                ->route('videos.index')
+                ->route('make-a-video.index')
                 ->with('success', 'Your video is being processed! You will see it here once it\'s ready.');
 
         } catch (\Exception $e) {
@@ -94,6 +98,26 @@ class VideoController extends Controller
     }
 
     /**
+     * Set a session flash message for a completed job
+     */
+    public function notifyCompletion(VideoJob $videoJob)
+    {
+        if ($videoJob->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($videoJob->status === 'completed') {
+            session()->flash('video_completed', [
+                'id' => $videoJob->id,
+                'download_url' => route('make-a-video.download', $videoJob),
+                'stream_url' => route('make-a-video.stream', $videoJob),
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
      * Show the status of a specific video job
      */
     public function status(VideoJob $videoJob)
@@ -112,6 +136,26 @@ class VideoController extends Controller
             'created_at' => $videoJob->created_at,
             'updated_at' => $videoJob->updated_at,
         ]);
+    }
+
+    /**
+     * Serve the video thumbnail
+     */
+    public function thumbnail(VideoJob $videoJob)
+    {
+        // Ensure user can only view their own thumbnails
+        if ($videoJob->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access');
+        }
+
+        if (!$videoJob->thumbnail_path || !Storage::exists($videoJob->thumbnail_path)) {
+            // Return a default placeholder or 404
+            // For now, let's return a generated placeholder or 404
+            // Ideally, we could redirect to a static asset: return redirect('/images/video-placeholder.png');
+            abort(404, 'Thumbnail not found');
+        }
+
+        return response()->file(Storage::path($videoJob->thumbnail_path));
     }
 
     /**
@@ -205,7 +249,7 @@ class VideoController extends Controller
         $videoJob->delete();
 
         return redirect()
-            ->route('videos.index')
+            ->route('make-a-video.index')
             ->with('success', 'Video deleted successfully');
     }
 }

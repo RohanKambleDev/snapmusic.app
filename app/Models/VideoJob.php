@@ -12,6 +12,7 @@ class VideoJob extends Model
         'image_path',
         'audio_path',
         'video_path',
+        'thumbnail_path',
         'status',
         'error_message',
         'duration',

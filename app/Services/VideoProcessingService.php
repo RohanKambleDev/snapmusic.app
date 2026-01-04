@@ -101,6 +101,61 @@ class VideoProcessingService
     }
 
     /**
+     * Generate a thumbnail image from the video
+     *
+     * @param string $videoPath Absolute path to the video file
+     * @param string $thumbnailPath Absolute path for the output thumbnail
+     * @return bool Success status
+     */
+    public function generateThumbnail(string $videoPath, string $thumbnailPath): bool
+    {
+        // Extract frame at 1 second mark (or start if video is shorter)
+        // -ss 00:00:01: Seek to 1 second
+        // -vframes 1: Output only 1 frame
+        $command = [
+            'ffmpeg',
+            '-y',
+            '-i', $videoPath,
+            '-ss', '00:00:01',
+            '-vframes', '1',
+            $thumbnailPath,
+        ];
+
+        try {
+            $process = new Process($command);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                // If seeking failed (maybe video is < 1s), try grabbing the first frame
+                $fallbackCommand = [
+                    'ffmpeg',
+                    '-y',
+                    '-i', $videoPath,
+                    '-vframes', '1',
+                    $thumbnailPath,
+                ];
+                $fallbackProcess = new Process($fallbackCommand);
+                $fallbackProcess->run();
+
+                if (!$fallbackProcess->isSuccessful()) {
+                    Log::error('Thumbnail generation failed', [
+                        'error' => $fallbackProcess->getErrorOutput(),
+                        'video' => $videoPath,
+                    ]);
+                    return false;
+                }
+            }
+
+            return file_exists($thumbnailPath);
+        } catch (\Exception $e) {
+            Log::error('Thumbnail generation exception', [
+                'exception' => $e->getMessage(),
+            ]);
+            return false;
+        }
+    }
+
+    /**
      * Get the duration of an audio file in seconds
      *
      * @param string $audioPath Absolute path to the audio file
