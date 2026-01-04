@@ -14,6 +14,7 @@ Your `.gitignore` is crucial. **Never** commit these to your repository:
 -   `/storage/*.key`: OAuth keys (if using Passport).
 
 **Your current `.gitignore` looks mostly correct**, but ensure you check:
+
 ```gitignore
 /vendor
 /node_modules
@@ -124,6 +125,7 @@ npm run build
 ```
 
 This command will:
+
 1.  Read your `vite.config.js`.
 2.  Compile CSS/JS into `/public/build/assets`.
 3.  Generate a `manifest.json`.
@@ -186,6 +188,7 @@ server {
 ```
 
 Enable it:
+
 ```bash
 sudo ln -s /etc/nginx/sites-available/snapmusic /etc/nginx/sites-enabled/
 sudo nginx -t
@@ -212,14 +215,15 @@ autostart=true
 autorestart=true
 stopasgroup=true
 killasgroup=true
-user=deployer
+user=rohan
 numprocs=2
 redirect_stderr=true
-stdout_logfile=/var/www/snapmusic/storage/logs/worker.log
+stdout_logfile=/data/snapmusic/storage/logs/snapmusic-worker.log
 stopwaitsecs=3600
 ```
 
 Start it:
+
 ```bash
 sudo supervisorctl reread
 sudo supervisorctl update

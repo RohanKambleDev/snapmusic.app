@@ -9,8 +9,6 @@
 npm-debug.log
 yarn-error.log
 /public/build
-GEMINI.md
-GEMINI-bak.md
 *.log
 *.sqlite
 *.sqlite3
@@ -20,3 +18,5 @@ GEMINI-bak.md
 *.swo
 .idea/
 .vscode/
+CLAUDE.md
+GEMINI.md
