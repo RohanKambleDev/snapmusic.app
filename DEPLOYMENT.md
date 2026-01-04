@@ -80,16 +80,16 @@ sudo apt install -y nodejs
 
 ## 5. Application Deployment
 
-We will deploy to `/var/www/snapmusic`.
+We will deploy to `/data/snapmusic`.
 
 ```bash
 # 1. Clone Repository
-sudo mkdir -p /var/www/snapmusic
-sudo chown -R deployer:deployer /var/www/snapmusic
-git clone https://github.com/yourusername/snapmusic.git /var/www/snapmusic
+sudo mkdir -p /data/snapmusic
+sudo chown -R deployer:deployer /data/snapmusic
+git clone https://github.com/yourusername/snapmusic.git /data/snapmusic
 
 # 2. Install PHP Dependencies
-cd /var/www/snapmusic
+cd /data/snapmusic
 composer install --optimize-autoloader --no-dev
 
 # 3. Setup Environment
@@ -139,12 +139,14 @@ Nginx runs as `www-data`. It needs write access to storage and cache.
 
 ```bash
 # 1. Set ownership of the specific writable directories
-sudo chown -R www-data:www-data /var/www/snapmusic/storage
-sudo chown -R www-data:www-data /var/www/snapmusic/bootstrap/cache
+sudo chown -R www-data:www-data /data/snapmusic/storage
+sudo chown -R www-data:www-data /data/snapmusic/bootstrap/cache
+
+sudo chown -R rohan:www-data /data/snapmusic/
 
 # 2. Set directory permissions
-sudo chmod -R 775 /var/www/snapmusic/storage
-sudo chmod -R 775 /var/www/snapmusic/bootstrap/cache
+sudo chmod -R 775 /data/snapmusic/storage
+sudo chmod -R 775 /data/snapmusic/bootstrap/cache
 ```
 
 ---
@@ -157,7 +159,7 @@ Create `/etc/nginx/sites-available/snapmusic`:
 server {
     listen 80;
     server_name yourdomain.com;
-    root /var/www/snapmusic/public;
+    root /data/snapmusic/public;
 
     add_header X-Frame-Options "SAMEORIGIN";
     add_header X-Content-Type-Options "nosniff";
@@ -210,7 +212,7 @@ Create `/etc/supervisor/conf.d/snapmusic-worker.conf`:
 ```ini
 [program:snapmusic-worker]
 process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/snapmusic/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+command=php /data/snapmusic/artisan queue:work --sleep=3 --tries=3 --max-time=3600
 autostart=true
 autorestart=true
 stopasgroup=true
