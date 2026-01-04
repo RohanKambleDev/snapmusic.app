@@ -139,6 +139,26 @@ class VideoController extends Controller
     }
 
     /**
+     * Serve the video thumbnail
+     */
+    public function thumbnail(VideoJob $videoJob)
+    {
+        // Ensure user can only view their own thumbnails
+        if ($videoJob->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access');
+        }
+
+        if (!$videoJob->thumbnail_path || !Storage::exists($videoJob->thumbnail_path)) {
+            // Return a default placeholder or 404
+            // For now, let's return a generated placeholder or 404
+            // Ideally, we could redirect to a static asset: return redirect('/images/video-placeholder.png');
+            abort(404, 'Thumbnail not found');
+        }
+
+        return response()->file(Storage::path($videoJob->thumbnail_path));
+    }
+
+    /**
      * Download the generated video
      */
     public function download(VideoJob $videoJob)

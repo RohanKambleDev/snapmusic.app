@@ -57,6 +57,22 @@ class ProcessVideoJob implements ShouldQueue
             // Process video
             $videoProcessor->generateVideo($imagePath, $audioPath, $absoluteVideoPath);
 
+            // Generate Thumbnail
+            $thumbnailFileName = 'thumb_' . $this->videoJob->id . '_' . time() . '.jpg';
+            $thumbnailPath = 'videos/thumbnails/' . $thumbnailFileName;
+            $absoluteThumbnailPath = Storage::path($thumbnailPath);
+            
+            // Ensure thumbnails directory exists
+            Storage::makeDirectory('videos/thumbnails');
+
+            if ($videoProcessor->generateThumbnail($absoluteVideoPath, $absoluteThumbnailPath)) {
+                $this->videoJob->update(['thumbnail_path' => $thumbnailPath]);
+            } else {
+                Log::channel('snapmusic')->warning('Thumbnail generation failed', [
+                    'video_job_id' => $this->videoJob->id,
+                ]);
+            }
+
             // Mark job as completed
             $this->videoJob->markAsCompleted($videoPath);
 
