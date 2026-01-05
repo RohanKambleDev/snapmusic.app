@@ -15,11 +15,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased bg-white">
-    <div class="flex min-h-screen">
+    <div class="flex h-screen overflow-hidden">
         <!-- Left Side - Form -->
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 order-2 lg:order-1">
-            <div class="w-full max-w-md">
-                <div class="flex justify-between items-center mb-10 lg:absolute lg:top-8 lg:left-8 lg:w-auto w-full">
+        <div class="w-full lg:w-1/2 h-full overflow-y-auto p-6 lg:p-12 order-2 lg:order-1 scrollbar-hide">
+            <div class="w-full max-w-md mx-auto min-h-full flex flex-col justify-center relative">
+                <div class="flex justify-between items-center mb-10 lg:absolute lg:top-0 lg:left-0 lg:w-auto w-full pt-8 lg:pt-0">
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white font-bold">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
@@ -28,7 +28,7 @@
                     </div>
                 </div>
 
-                <div class="mb-10">
+                <div class="mb-10 mt-8 lg:mt-20">
                     <h2 class="text-4xl font-bold text-gray-900 mb-3">Welcome back!</h2>
                     <p class="text-gray-500">Sign in to continue creating viral music videos in seconds.</p>
                 </div>
@@ -90,7 +90,7 @@
                     </div>
                 </form>
 
-                <div class="mt-8">
+                <div class="mt-8 pb-8">
                     <div class="relative">
                         <div class="absolute inset-0 flex items-center">
                             <div class="w-full border-t border-gray-200"></div>

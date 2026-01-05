@@ -15,9 +15,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased bg-white">
-    <div class="flex min-h-screen">
+    <div class="flex h-screen overflow-hidden">
         <!-- Left Side - Marketing -->
-        <div class="hidden lg:flex lg:w-1/2 bg-gray-50 p-12 flex-col justify-between relative overflow-hidden">
+        <div class="hidden lg:flex lg:w-1/2 bg-gray-50 p-12 flex-col justify-between relative h-full overflow-y-auto scrollbar-hide">
             <!-- Logo -->
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white font-bold">
@@ -94,13 +94,13 @@
         </div>
 
         <!-- Right Side - Form -->
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
-            <div class="w-full max-w-md">
-                <div class="flex justify-end mb-8 lg:absolute lg:top-8 lg:right-8">
+        <div class="w-full lg:w-1/2 h-full overflow-y-auto p-6 lg:p-12 scrollbar-hide">
+            <div class="w-full max-w-md mx-auto min-h-full flex flex-col justify-center relative">
+                <div class="flex justify-end mb-8 lg:absolute lg:top-0 lg:right-0 pt-8 lg:pt-0">
                     <a href="{{ route('login') }}" class="text-sm font-semibold text-gray-500 hover:text-gray-900">Sign In</a>
                 </div>
 
-                <div class="mb-10">
+                <div class="mb-10 mt-8 lg:mt-20">
                     <h2 class="text-4xl font-bold text-gray-900 mb-3">Create your free account</h2>
                     <p class="text-gray-500">Start making viral music videos in under 60 seconds. No credit card required.</p>
                 </div>
@@ -181,7 +181,7 @@
                     </div>
                 </form>
 
-                <div class="mt-8">
+                <div class="mt-8 pb-8">
                     <div class="relative">
                         <div class="absolute inset-0 flex items-center">
                             <div class="w-full border-t border-gray-200"></div>
