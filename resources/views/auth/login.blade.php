@@ -1,34 +1,9 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'SnapMusic') }}</title>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
-
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="font-sans antialiased bg-white">
+<x-app-layout>
     <div class="flex h-screen overflow-hidden">
         <!-- Left Side - Form -->
         <div class="w-full lg:w-1/2 h-full overflow-y-auto p-6 lg:p-12 order-2 lg:order-1 scrollbar-hide">
             <div class="w-full max-w-md mx-auto min-h-full flex flex-col justify-center relative">
-                <div class="flex justify-between items-center mb-10 lg:absolute lg:top-0 lg:left-0 lg:w-auto w-full pt-8 lg:pt-0">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white font-bold">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
-                        </div>
-                        <span class="text-xl font-bold text-gray-900">SnapMusic</span>
-                    </div>
-                </div>
-
-                <div class="mb-10 mt-8 lg:mt-20">
+                <div class="mb-10 mt-24 lg:mt-20">
                     <h2 class="text-4xl font-bold text-gray-900 mb-3">Welcome back!</h2>
                     <p class="text-gray-500">Sign in to continue creating viral music videos in seconds.</p>
                 </div>
@@ -115,11 +90,7 @@
         </div>
 
         <!-- Right Side - Marketing -->
-        <div class="hidden lg:flex lg:w-1/2 bg-gray-50 p-12 flex-col justify-center relative overflow-hidden order-1 lg:order-2">
-            <div class="flex justify-end mb-8 absolute top-8 right-8">
-                <a href="{{ route('register') }}" class="text-sm font-semibold text-gray-500 hover:text-gray-900">Create Account</a>
-            </div>
-
+        <div class="hidden lg:flex lg:w-1/2 bg-gray-50 p-12 flex-col justify-center relative overflow-hidden order-1 lg:order-2 h-full">
             <div class="relative z-10 max-w-lg mx-auto w-full">
                 <h2 class="text-3xl font-bold text-gray-900 mb-2">Your creative studio awaits</h2>
                 <p class="text-gray-500 mb-8">Join thousands of creators making viral music videos instantly.</p>
@@ -142,7 +113,7 @@
                     <div class="rounded-2xl p-6 bg-gradient-to-r from-emerald-400 to-green-500 text-white shadow-lg transform transition hover:scale-[1.02]">
                         <div class="flex items-start gap-4">
                             <div class="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2-2v8a2 2 0 002 2z"/></svg>
                             </div>
                             <div>
                                 <h3 class="font-bold text-lg mb-1">Platform Ready</h3>
@@ -195,5 +166,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+</x-app-layout>

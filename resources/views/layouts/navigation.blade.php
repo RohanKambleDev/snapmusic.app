@@ -138,12 +138,18 @@
 
   <!-- Desktop Nav -->
   <nav class="hidden md:flex items-center gap-8 text-sm text-gray-600">
-    @if(request()->is('/') || request()->is('how-it-works') || request()->is('use-cases'))
+    @if(request()->is('/') || request()->is('how-it-works') || request()->is('use-cases') || request()->is('login') || request()->is('register'))
         <x-nav-link :href="route('use-case.index')" :active="request()->routeIs('use-case.*')">
             {{ __('Use Cases') }}
         </x-nav-link>
         <x-nav-link :href="route('how-it-works.index')" :active="request()->routeIs('how-it-works.*')">
             {{ __('How it Works') }}
+        </x-nav-link>
+        <x-nav-link :href="route('login')" :active="request()->routeIs('login')">
+            {{ __('Sign In') }}
+        </x-nav-link>
+        <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
+            {{ __('Sign Up') }}
         </x-nav-link>
     @endif
     @auth
