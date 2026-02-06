@@ -1,7 +1,7 @@
 {{-- <body class="min-h-screen bg-gradient-to-b from-[#060A14] via-[#050814] to-[#040712] text-slate-100"> --}}
 
 <x-app-layout>
-    <div class="px-6 pb-16 pt-16 min-h-screen bg-gradient-to-b from-[#060A14] via-[#050814] to-[#040712] text-slate-100">
+    <div class="px-6 pb-8 pt-1 bg-gradient-to-b from-[#060A14] via-[#050814] to-[#040712] text-slate-100">
         <div class="mx-auto max-w-5xl">
 
             <!-- Notifications -->
@@ -67,7 +67,7 @@
             </div>
 
             <!-- Stepper -->
-            <div class="mt-10 flex items-center justify-center px-4">
+            <div class="mt-3 flex items-center justify-center px-4">
                 <div class="w-full max-w-2xl">
                     <div class="flex items-center justify-center gap-2 sm:gap-4">
                         <!-- Step 1 -->
@@ -102,13 +102,13 @@
             </div>
 
             <!-- Title -->
-            <div class="mt-12 text-center">
+            {{-- <div class="mt-5 text-center">
                 <h1 id="pageTitle" class="text-4xl font-semibold tracking-tight">Upload Your Photo</h1>
                 <p id="pageSubtitle" class="mt-3 text-white/50 text-sm"></p>
-            </div>
+            </div> --}}
 
             <!-- Panels -->
-            <div class="mt-10 flex justify-center">
+            <div class="mt-5 flex justify-center">
                 <form id="uploadForm" action="{{ route('make-a-video.upload') }}" method="POST" enctype="multipart/form-data" class="w-full max-w-3xl">
                     @csrf
                     
@@ -116,6 +116,12 @@
                     <section id="panel1" class="block">
                         <div
                             class="rounded-3xl border border-white/10 bg-white/[0.03] shadow-[0_20px_80px_rgba(0,0,0,0.55)] p-8">
+
+                            <div class="text-center">
+                                <h1 id="pageTitle" class="text-4xl font-semibold tracking-tight">Upload Your Photo</h1>
+                                <p id="pageSubtitle" class="mt-3 text-white/50 text-sm"></p>
+                            </div>
+
                             <div id="imageDrop"
                                 class="group relative rounded-2xl border-2 border-dashed border-white/15 bg-black/20 p-10 md:p-14 text-center transition
                        hover:border-white/25 hover:bg-black/25"

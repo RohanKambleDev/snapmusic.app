@@ -5,7 +5,7 @@
     </head>
     {{-- <body class="font-sans antialiased"> --}}
     <body class="bg-white text-gray-900" x-data="{ mobileMenuOpen: false }">
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen">
             @include('layouts.navigation')
 
             @include('layouts.header')
