@@ -93,7 +93,8 @@
             <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Create your free account</h2>
             <p class="text-gray-600 mb-8">Start making viral music videos in under 60 seconds. No credit card required.</p>
 
-            <form action="#" method="POST" class="space-y-6">
+            <form action="{{ route('register') }}" method="POST" class="space-y-6">
+                @csrf
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                     <div class="relative rounded-md shadow-sm">
@@ -102,8 +103,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
-                        <input type="text" name="name" id="name" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-purple-500 focus:border-purple-500 block w-full pl-12 p-3.5" placeholder="John Doe" required>
+                        <input type="text" name="name" id="name" value="{{ old('name') }}" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-purple-500 focus:border-purple-500 block w-full pl-12 p-3.5" placeholder="John Doe" required autofocus autocomplete="name">
                     </div>
+                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
                 </div>
 
                 <div>
@@ -114,8 +116,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                         </div>
-                        <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-purple-500 focus:border-purple-500 block w-full pl-12 p-3.5" placeholder="you@example.com" required>
+                        <input type="email" name="email" id="email" value="{{ old('email') }}" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-purple-500 focus:border-purple-500 block w-full pl-12 p-3.5" placeholder="you@example.com" required autocomplete="username">
                     </div>
+                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
 
                 <div>
@@ -126,9 +129,22 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
                         </div>
-                        <input type="password" name="password" id="password" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-purple-500 focus:border-purple-500 block w-full pl-12 p-3.5" placeholder="••••••••" required>
+                        <input type="password" name="password" id="password" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-purple-500 focus:border-purple-500 block w-full pl-12 p-3.5" placeholder="••••••••" required autocomplete="new-password">
                     </div>
-                    <p class="mt-2 text-xs text-gray-500">Must be at least 8 characters</p>
+                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                </div>
+
+                <div>
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                    <div class="relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <input type="password" name="password_confirmation" id="password_confirmation" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-purple-500 focus:border-purple-500 block w-full pl-12 p-3.5" placeholder="••••••••" required autocomplete="new-password">
+                    </div>
+                    <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                 </div>
 
                 <div class="flex items-center">
@@ -146,7 +162,7 @@
                 </button>
             </form>
             <div class="mt-6 text-center text-sm text-gray-600">
-                Already have an account? <a href="#" class="font-medium text-purple-600 hover:text-purple-500">Sign in</a>
+                Already have an account? <a href="{{ route('login') }}" class="font-medium text-purple-600 hover:text-purple-500">Sign in</a>
             </div>
 
             {{-- <div class="mt-8 relative">

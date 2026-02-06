@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="flex overflow-hidden bg-gray-5">
+    <div class="flex overflow-hidden bg-gray-50">
         <!-- Left Side - Form -->
         <div class="w-full lg:w-1/2 h-full overflow-y-auto p-6 lg:p-12 order-2 lg:order-1 scrollbar-hide justify-center flex items-center">
             <div class="w-full max-w-md mx-auto min-h-full flex flex-col relative">
@@ -21,7 +21,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             </div>
-                            <input id="email" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="you@example.com"
+                            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" placeholder="you@example.com"
                                 class="pl-10 block w-full border-gray-200 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-50/50 py-3 text-gray-900 placeholder-gray-400">
                         </div>
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
