@@ -129,8 +129,8 @@
 
 
 <!-- ================= HEADER ================= -->
-<header class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between relative z-50">
-  <div class="flex items-center gap-2 font-semibold text-lg">
+<header class="mx-auto px-9 py-3 flex items-center justify-between relative z-50 bg-gray-100">
+  <div class="flex items-center gap-2 font-semibold text-lg ml-32">
     <a href="/" class="flex items-center gap-2 hover:text-black">
         <x-application-logo class="w-20 h-20 fill-current text-black" />
     </a>
@@ -145,12 +145,14 @@
         <x-nav-link :href="route('how-it-works.index')" :active="request()->routeIs('how-it-works.*')">
             {{ __('How it Works') }}
         </x-nav-link>
-        <x-nav-link :href="route('login')" :active="request()->routeIs('login')">
-            {{ __('Sign In') }}
-        </x-nav-link>
-        <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
-            {{ __('Sign Up') }}
-        </x-nav-link>
+        @guest
+            <x-nav-link :href="route('login')" :active="request()->routeIs('login')">
+                {{ __('Sign In') }}
+            </x-nav-link>
+            <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
+                {{ __('Sign Up') }}
+            </x-nav-link>
+        @endguest
     @endif
     @auth
         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
@@ -229,6 +231,14 @@
         <x-nav-link :href="route('how-it-works.index')" :active="request()->routeIs('how-it-works.*')" @click="mobileMenuOpen = false">
             {{ __('How it Works') }}
         </x-nav-link>
+        @guest
+            <x-nav-link :href="route('login')" :active="request()->routeIs('login')" @click="mobileMenuOpen = false">
+                {{ __('Sign In') }}
+            </x-nav-link>
+            <x-nav-link :href="route('register')" :active="request()->routeIs('register')" @click="mobileMenuOpen = false">
+                {{ __('Sign Up') }}
+            </x-nav-link>
+        @endguest
     @endif
     @auth
         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" @click="mobileMenuOpen = false">
