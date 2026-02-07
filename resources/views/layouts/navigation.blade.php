@@ -129,7 +129,7 @@
 
 
 <!-- ================= HEADER ================= -->
-<header class="mx-auto px-9 py-3 flex items-center justify-between relative z-50 bg-gray-100">
+<header x-data="{ mobileMenuOpen: false }" class="mx-auto px-9 py-3 flex items-center justify-between relative z-50 bg-gray-100">
   <div class="flex items-center gap-2 font-semibold text-lg ml-32">
     <a href="/" class="flex items-center gap-2 hover:text-black">
         <x-application-logo class="w-20 h-20 fill-current text-black" />
@@ -224,7 +224,7 @@
     @click.away="mobileMenuOpen = false"
     x-cloak
     class="absolute top-full left-0 right-0 m-4 p-6 bg-white shadow-xl rounded-2xl border border-gray-100 md:hidden flex flex-col gap-4 text-gray-600 z-50">
-    @if(request()->is('/') || request()->is('how-it-works') || request()->is('use-cases'))
+    @if(request()->is('/') || request()->is('how-it-works') || request()->is('use-cases') || request()->is('login') || request()->is('register'))
         <x-nav-link :href="route('use-case.index')" :active="request()->routeIs('use-case.*')" @click="mobileMenuOpen = false">
             {{ __('Use Cases') }}
         </x-nav-link>

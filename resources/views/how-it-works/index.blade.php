@@ -1,7 +1,7 @@
 <x-app-layout>
 
 <!-- ================= HERO ================= -->
-<section class="bg-gray-50 py-20">
+<section class="bg-gray-50 pt-20 pb-12">
   <div class="max-w-7xl mx-auto px-6 text-center">
     <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
       Simple. Fast. Creative.

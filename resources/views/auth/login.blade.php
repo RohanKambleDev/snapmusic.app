@@ -1,7 +1,7 @@
 <x-app-layout>
-    <div class="flex overflow-hidden bg-gray-50">
+    <div class="flex h-[calc(100vh-13rem)] overflow-y-scroll bg-gray-50">
         <!-- Left Side - Form -->
-        <div class="w-full lg:w-1/2 h-full overflow-y-auto p-6 lg:p-12 order-2 lg:order-1 scrollbar-hide justify-center flex items-center">
+        <div class="w-full lg:w-1/2 h-full p-6 lg:p-12 order-2 lg:order-1 justify-center flex items-center">
             <div class="w-full max-w-md mx-auto min-h-full flex flex-col relative">
                 <div class="">
                     <h2 class="text-4xl font-bold text-gray-900 mb-10">Welcome back!</h2>
@@ -68,7 +68,7 @@
         </div>
 
         <!-- Right Side - Marketing -->
-        <div class="hidden lg:flex lg:w-1/2 p-12 justify-center relative overflow-hidden order-1 lg:order-2 h-full">
+        <div class="hidden lg:flex lg:w-1/2 p-12 justify-center relative order-1 lg:order-2 h-full">
             <div class="relative z-10 max-w-lg mx-auto w-full">
 
             <h2 class="text-3xl font-bold text-gray-900 mb-2">Your creative studio awaits</h2>
