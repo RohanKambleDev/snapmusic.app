@@ -30,6 +30,28 @@ class VideoController extends Controller
             $processingJobs = json_encode($jobs->whereIn('status', ['pending', 'processing'])->pluck('id')->toArray());
         }
 
+        // Check for immediately failed/completed job from session
+        if (session()->has('latest_job_id')) {
+            $latestJob = VideoJob::find(session('latest_job_id'));
+            if ($latestJob) {
+                if ($latestJob->status === 'failed') {
+                    session()->flash('error', $latestJob->error_message ?? 'Something went wrong');
+                    session()->forget('latest_job_id');
+                    session()->forget('success'); // Clear the "processing started" message
+                } elseif ($latestJob->status === 'completed') {
+                    session()->flash('video_completed', [
+                        'id' => $latestJob->id,
+                        'download_url' => route('make-a-video.download', $latestJob),
+                        'stream_url' => route('make-a-video.stream', $latestJob),
+                    ]);
+                    session()->forget('latest_job_id');
+                    session()->forget('success');
+                }
+            } else {
+                session()->forget('latest_job_id');
+            }
+        }
+
         return view('make-a-video.index', compact('jobs', 'processingJobs'));
     }
 
@@ -60,22 +82,41 @@ class VideoController extends Controller
                 'status' => 'pending',
             ]);
 
-            // Dispatch the job to the queue
-            ProcessVideoJob::dispatch($videoJob);
+                        // Dispatch the job to the queue
 
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Video processing started',
-                    'job_id' => $videoJob->id,
-                ]);
-            }
+                        ProcessVideoJob::dispatch($videoJob);
 
-            return redirect()
-                ->route('make-a-video.index')
-                ->with('success', 'Your video is being processed! You will see it here once it\'s ready.');
+            
 
-        } catch (\Exception $e) {
+                        // Track this job to handle immediate failures/completions
+
+                        session()->put('latest_job_id', $videoJob->id);
+
+            
+
+                        if ($request->wantsJson()) {
+
+                            return response()->json([
+
+                                'success' => true,
+
+                                'message' => 'Video processing started',
+
+                                'job_id' => $videoJob->id,
+
+                            ]);
+
+                        }
+
+            
+
+                        return redirect()
+
+                            ->route('make-a-video.index')
+
+                            ->with('success', 'Your video is being processed! You will see it here once it\'s ready.');
+
+                    } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::channel('snapmusic')->error('UPLOAD_ERR: File upload or job creation failed', [
                 'user_id' => $user->id,
                 'image_name' => $request->file('image')?->getClientOriginalName(),
