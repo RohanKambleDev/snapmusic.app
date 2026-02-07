@@ -86,7 +86,7 @@ class ProcessVideoJob implements ShouldQueue
 
         } catch (\Exception $e) {
             // Mark job as failed
-            $this->videoJob->markAsFailed($e->getMessage());
+            $this->videoJob->markAsFailed('Something went wrong');
 
             Log::channel('snapmusic')->error('FFMPEG_PROC_ERR: Video processing failed', [
                 'video_job_id' => $this->videoJob->id,
@@ -105,9 +105,7 @@ class ProcessVideoJob implements ShouldQueue
     public function failed(\Throwable $exception): void
     {
         // This method is called when all retry attempts have been exhausted
-        $this->videoJob->markAsFailed(
-            'Video processing failed after ' . $this->tries . ' attempts: ' . $exception->getMessage()
-        );
+        $this->videoJob->markAsFailed('Something went wrong');
 
         Log::channel('snapmusic')->error('JOB_FAILED: Video job permanently failed', [
             'video_job_id' => $this->videoJob->id,

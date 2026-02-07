@@ -112,6 +112,8 @@ class VideoController extends Controller
                 'download_url' => route('make-a-video.download', $videoJob),
                 'stream_url' => route('make-a-video.stream', $videoJob),
             ]);
+        } elseif ($videoJob->status === 'failed') {
+            session()->flash('error', $videoJob->error_message ?? 'Something went wrong');
         }
 
         return response()->json(['success' => true]);

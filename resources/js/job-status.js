@@ -27,27 +27,25 @@ async function checkJobStatuses() {
 				const index = processingJobs.indexOf(jobId);
 				if (index > -1) processingJobs.splice(index, 1);
 
-				// If completed, trigger session flash
-				if (data.status === "completed") {
-					try {
-						await fetch(
-							`/make-a-video/${jobId}/notify-completion`,
-							{
-								method: "POST",
-								headers: {
-									"X-CSRF-TOKEN": document.querySelector(
-										'meta[name="csrf-token"]'
-									).content,
-									"X-Requested-With": "XMLHttpRequest",
-								},
-							}
-						);
-					} catch (e) {
-						console.error("Notify failed", e);
-					}
+				// Trigger session flash for success or error
+				try {
+					await fetch(
+						`/make-a-video/${jobId}/notify-completion`,
+						{
+							method: "POST",
+							headers: {
+								"X-CSRF-TOKEN": document.querySelector(
+									'meta[name="csrf-token"]'
+								).content,
+								"X-Requested-With": "XMLHttpRequest",
+							},
+						}
+					);
+				} catch (e) {
+					console.error("Notify failed", e);
 				}
 
-				// Optional: Reload if all done to refresh links?
+				// Reload to show the flash message and update UI
 				if (processingJobs.length === 0) {
 					setTimeout(() => location.reload(), 500);
 				}
