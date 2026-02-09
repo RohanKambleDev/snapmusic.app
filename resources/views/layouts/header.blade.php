@@ -1,7 +1,9 @@
 <!-- ================= HEADER ================= -->
 @php
     $isDark = request()->is('/') || request()->routeIs('how-it-works.*') || request()->routeIs('use-case.*');
-    $navTextClass = $isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black';
+    $navBaseClass = 'transition-all duration-300 hover:scale-105';
+    $navTextClass = $isDark ? "$navBaseClass text-gray-400 hover:text-white" : "$navBaseClass text-gray-600 hover:text-black";
+    $activeClass = $isDark ? 'text-white font-semibold !opacity-100 after:content-[\'\'] after:block after:h-0.5 after:w-full after:bg-purple-500 after:mt-1' : 'text-black font-semibold !opacity-100 after:content-[\'\'] after:block after:h-0.5 after:w-full after:bg-purple-600 after:mt-1';
     $logoClass = $isDark ? 'fill-white text-white' : 'fill-black text-black';
     $logoTextClass = $isDark ? 'text-white' : 'text-gray-900';
 @endphp
@@ -20,24 +22,29 @@
 
     <!-- Desktop Nav -->
     <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
-        <x-nav-link :href="route('use-case.index')" :active="request()->routeIs('use-case.*')" class="{{ $navTextClass }}">
+        <x-nav-link :href="route('use-case.index')" :active="request()->routeIs('use-case.*')" 
+            class="{{ $navTextClass }} {{ request()->routeIs('use-case.*') ? $activeClass : '' }}">
             {{ __('Use Cases') }}
         </x-nav-link>
-        <x-nav-link :href="route('how-it-works.index')" :active="request()->routeIs('how-it-works.*')" class="{{ $navTextClass }}">
+        <x-nav-link :href="route('how-it-works.index')" :active="request()->routeIs('how-it-works.*')" 
+            class="{{ $navTextClass }} {{ request()->routeIs('how-it-works.*') ? $activeClass : '' }}">
             {{ __('How it Works') }}
         </x-nav-link>
         
         @guest
-            <x-nav-link :href="route('login')" :active="request()->routeIs('login')" class="{{ $navTextClass }}">
+            <x-nav-link :href="route('login')" :active="request()->routeIs('login')" 
+                class="{{ $navTextClass }} {{ request()->routeIs('login') ? $activeClass : '' }}">
                 {{ __('Sign In') }}
             </x-nav-link>
-            <x-nav-link :href="route('register')" :active="request()->routeIs('register')" class="{{ $navTextClass }}">
+            <x-nav-link :href="route('register')" :active="request()->routeIs('register')" 
+                class="{{ $navTextClass }} {{ request()->routeIs('register') ? $activeClass : '' }}">
                 {{ __('Sign Up') }}
             </x-nav-link>
         @endguest
 
         @auth
-            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="{{ $navTextClass }}">
+            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" 
+                class="{{ $navTextClass }} {{ request()->routeIs('dashboard') ? $activeClass : '' }}">
                 {{ __('Dashboard') }}
             </x-nav-link>
         @endauth
@@ -108,19 +115,23 @@
     x-cloak
     class="absolute top-full left-0 right-0 mx-4 mt-2 p-4 bg-white/95 backdrop-blur-xl shadow-2xl rounded-2xl border border-gray-100 md:hidden flex flex-col gap-2 text-gray-800 z-50 ring-1 ring-black/5">
         
-        <x-nav-link :href="route('use-case.index')" :active="request()->routeIs('use-case.*')" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-base font-medium text-gray-700">
+        <x-nav-link :href="route('use-case.index')" :active="request()->routeIs('use-case.*')" 
+            class="block px-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('use-case.*') ? 'bg-purple-50 text-purple-700 font-bold' : 'text-gray-700 hover:bg-gray-50' }}">
             {{ __('Use Cases') }}
         </x-nav-link>
-        <x-nav-link :href="route('how-it-works.index')" :active="request()->routeIs('how-it-works.*')" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-base font-medium text-gray-700">
+        <x-nav-link :href="route('how-it-works.index')" :active="request()->routeIs('how-it-works.*')" 
+            class="block px-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('how-it-works.*') ? 'bg-purple-50 text-purple-700 font-bold' : 'text-gray-700 hover:bg-gray-50' }}">
             {{ __('How it Works') }}
         </x-nav-link>
         
         @guest
             <div class="border-t border-gray-100 my-2"></div>
-            <x-nav-link :href="route('login')" :active="request()->routeIs('login')" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-base font-medium text-gray-700">
+            <x-nav-link :href="route('login')" :active="request()->routeIs('login')" 
+                class="block px-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('login') ? 'bg-purple-50 text-purple-700 font-bold' : 'text-gray-700 hover:bg-gray-50' }}">
                 {{ __('Sign In') }}
             </x-nav-link>
-            <x-nav-link :href="route('register')" :active="request()->routeIs('register')" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-base font-medium text-gray-700">
+            <x-nav-link :href="route('register')" :active="request()->routeIs('register')" 
+                class="block px-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('register') ? 'bg-purple-50 text-purple-700 font-bold' : 'text-gray-700 hover:bg-gray-50' }}">
                 {{ __('Sign Up') }}
             </x-nav-link>
         @endguest
