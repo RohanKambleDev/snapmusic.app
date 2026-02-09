@@ -3,15 +3,14 @@
     <head>
         @include('layouts.head')
     </head>
-    {{-- <body class="font-sans antialiased"> --}}
-    <body class="bg-white text-gray-900" x-data="{ mobileMenuOpen: false }">
-        <div class="min-h-screen">
-            @include('layouts.navigation')
+    <body class="font-sans antialiased {{ (request()->is('/') || request()->routeIs('how-it-works.*') || request()->routeIs('use-case.*')) ? 'bg-gray-950 text-white' : 'bg-gray-50 text-gray-900' }}" x-data="{ mobileMenuOpen: false }">
+        <div class="min-h-screen flex flex-col">
+            {{-- @include('layouts.navigation') --}}
 
             @include('layouts.header')
 
             <!-- Page Content -->
-            <main>
+            <main class="flex-grow">
                 {{ $slot }}
             </main>
 
