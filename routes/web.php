@@ -14,7 +14,7 @@ Route::get('/', function () {
 Route::get('/use-cases', [UseCaseController::class, 'index'])->name('use-case.index');
 Route::get('/how-it-works', [HowItWorksController::class, 'index'])->name('how-it-works.index');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/{videoJob}', [DashboardController::class, 'show'])->name('dashboard.show');
 });

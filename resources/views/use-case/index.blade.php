@@ -11,7 +11,7 @@
     </div>
 
     <!-- ================= HERO ================= -->
-    <section class="relative pt-32 pb-20 overflow-hidden">
+    <section class="relative pt-12 pb-20 overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center">
             <h1 class="text-5xl lg:text-7xl font-bold tracking-tight text-white mb-6">
                 Endless <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 animate-gradient-x">Possibilities.</span>

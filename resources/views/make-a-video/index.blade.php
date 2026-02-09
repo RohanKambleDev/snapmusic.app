@@ -1,430 +1,453 @@
-{{-- <body class="min-h-screen bg-gradient-to-b from-[#060A14] via-[#050814] to-[#040712] text-slate-100"> --}}
-
 <x-app-layout>
-    <div class="px-6 pb-8 pt-1 bg-gradient-to-b from-[#060A14] via-[#050814] to-[#040712] text-slate-100">
-        <div class="mx-auto max-w-5xl">
+    <div class="min-h-screen bg-gray-950 text-white" x-data="videoWizard()">
+        
+        <!-- Background Ambient Effects -->
+        <div class="fixed inset-0 pointer-events-none">
+            <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[100px] animate-blob"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
+            <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+        </div>
 
-            <!-- Notifications -->
-            <div class="mt-6 mb-8" x-data="{ showSuccess: true, showCompleted: true, showError: true, showErrors: true }">
-                @if (session('success'))
-                    <div x-show="showSuccess" class="relative rounded-xl bg-green-500/10 border border-green-500/20 p-4 text-green-200 mb-4">
-                        <div class="pr-8">{{ session('success') }}</div>
-                        <button @click="showSuccess = false" class="absolute top-4 right-4 text-green-200/50 hover:text-green-200">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                    </div>
-                @endif
-
-                @if (session('video_completed'))
-                    @php $data = session('video_completed'); @endphp
-                    <div x-show="showCompleted" class="relative rounded-xl bg-emerald-500/20 border border-emerald-500/30 p-5 text-emerald-100 mb-4 flex items-center justify-between shadow-lg shadow-emerald-900/20">
-                        <div class="flex items-center gap-4">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            </div>
-                            <div>
-                                <p class="font-bold text-lg">Your video is ready!</p>
-                                <p class="text-emerald-300/80 text-sm">Video #{{ $data['id'] }} has been processed successfully.</p>
-                                <div class="mt-3 flex gap-4 text-sm font-semibold">
-                                    <a href="{{ $data['download_url'] }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 text-black hover:bg-emerald-400 transition shadow-sm">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                        Download MP4
-                                    </a>
-                                    <a href="{{ $data['stream_url'] }}" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition border border-white/10">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                        Preview
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <button @click="showCompleted = false" class="text-emerald-400/50 hover:text-emerald-400 p-2 rounded-lg hover:bg-emerald-400/10 transition">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div x-show="showError" class="relative rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-red-200 mb-4">
-                        <div class="pr-8">{{ session('error') }}</div>
-                        <button @click="showError = false" class="absolute top-4 right-4 text-red-200/50 hover:text-red-200">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                    <div x-show="showErrors" class="relative rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-red-200 mb-4">
-                        <ul class="list-disc list-inside pr-8">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                        <button @click="showErrors = false" class="absolute top-4 right-4 text-red-200/50 hover:text-red-200">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                    </div>
-                @endif
+        <div class="relative z-10 max-w-5xl mx-auto px-6 pb-12 pt-4">
+            
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                    Create Your Video
+                </h1>
+                <p class="mt-4 text-gray-400">Turn your image and audio into a viral video in 3 simple steps.</p>
             </div>
 
-            <!-- Stepper -->
-            <div class="mt-3 flex items-center justify-center px-4">
-                <div class="w-full max-w-2xl">
-                    <div class="flex items-center justify-center gap-2 sm:gap-4">
-                        <!-- Step 1 -->
-                        <div class="flex items-center gap-2 sm:gap-3">
-                            <div id="stepDot1"
-                                class="h-8 w-8 md:h-9 md:w-9 rounded-full bg-yellow-500 text-black font-semibold flex items-center justify-center text-sm md:text-base">
-                                1</div>
-                            <div id="stepLabel1" class="text-xs md:text-sm text-white/90">Image</div>
+            <!-- Wizard Progress -->
+            <div class="mb-12" x-show="step < 4">
+                <div class="flex items-center justify-center max-w-2xl mx-auto">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col items-center relative z-10">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300"
+                             :class="step >= 1 ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.5)]' : 'bg-gray-800 text-gray-500'">
+                            1
                         </div>
-
-                        <div class="h-px w-6 sm:w-16 bg-white/15"></div>
-
-                        <!-- Step 2 -->
-                        <div class="flex items-center gap-2 sm:gap-3">
-                            <div id="stepDot2"
-                                class="h-8 w-8 md:h-9 md:w-9 rounded-full bg-white/10 text-white/70 font-semibold flex items-center justify-center text-sm md:text-base">
-                                2</div>
-                            <div id="stepLabel2" class="text-xs md:text-sm text-white/70">Audio</div>
-                        </div>
-
-                        <div class="h-px w-6 sm:w-16 bg-white/15"></div>
-
-                        <!-- Step 3 -->
-                        <div class="flex items-center gap-2 sm:gap-3">
-                            <div id="stepDot3"
-                                class="h-8 w-8 md:h-9 md:w-9 rounded-full bg-white/10 text-white/70 font-semibold flex items-center justify-center text-sm md:text-base">
-                                3</div>
-                            <div id="stepLabel3" class="text-xs md:text-sm text-white/70">Create</div>
-                        </div>
+                        <span class="mt-2 text-xs font-medium uppercase tracking-wider" :class="step >= 1 ? 'text-purple-400' : 'text-gray-600'">Image</span>
                     </div>
-                </div>
-            </div>
-
-            <!-- Title -->
-            {{-- <div class="mt-5 text-center">
-                <h1 id="pageTitle" class="text-4xl font-semibold tracking-tight">Upload Your Photo</h1>
-                <p id="pageSubtitle" class="mt-3 text-white/50 text-sm"></p>
-            </div> --}}
-
-            <!-- Panels -->
-            <div class="mt-5 flex justify-center">
-                <form id="uploadForm" action="{{ route('make-a-video.upload') }}" method="POST" enctype="multipart/form-data" class="w-full max-w-3xl">
-                    @csrf
                     
-                    <!-- STEP 1: IMAGE -->
-                    <section id="panel1" class="block">
-                        <div
-                            class="rounded-3xl border border-white/10 bg-white/[0.03] shadow-[0_20px_80px_rgba(0,0,0,0.55)] p-8">
+                    <div class="flex-1 h-0.5 mx-4 transition-all duration-300" :class="step >= 2 ? 'bg-purple-600' : 'bg-gray-800'"></div>
 
-                            <div class="text-center">
-                                <h1 id="pageTitle" class="text-4xl font-semibold tracking-tight">Upload Your Photo</h1>
-                                <p id="pageSubtitle" class="mt-3 text-white/50 text-sm"></p>
+                    <!-- Step 2 -->
+                    <div class="flex flex-col items-center relative z-10">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300"
+                             :class="step >= 2 ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.5)]' : 'bg-gray-800 text-gray-500'">
+                            2
+                        </div>
+                        <span class="mt-2 text-xs font-medium uppercase tracking-wider" :class="step >= 2 ? 'text-purple-400' : 'text-gray-600'">Audio</span>
+                    </div>
+
+                    <div class="flex-1 h-0.5 mx-4 transition-all duration-300" :class="step >= 3 ? 'bg-purple-600' : 'bg-gray-800'"></div>
+
+                    <!-- Step 3 -->
+                    <div class="flex flex-col items-center relative z-10">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300"
+                             :class="step >= 3 ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.5)]' : 'bg-gray-800 text-gray-500'">
+                            3
+                        </div>
+                        <span class="mt-2 text-xs font-medium uppercase tracking-wider" :class="step >= 3 ? 'text-purple-400' : 'text-gray-600'">Review</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Notification -->
+            <div x-show="errorMessage" x-transition class="mb-8 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-200 flex items-center justify-between">
+                <span x-text="errorMessage"></span>
+                <button @click="errorMessage = ''" class="text-red-400 hover:text-white">&times;</button>
+            </div>
+
+            <!-- Main Content Area: Glass Container -->
+            <div class="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl overflow-hidden min-h-[400px]">
+                
+                <!-- Step 1: Image Upload -->
+                <div x-show="step === 1" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0" class="flex flex-col justify-center items-center h-full">
+                    <div class="w-full text-center" @dragover.prevent @drop.prevent="handleImageDrop($event)">
+                        <input type="file" x-ref="imageInput" class="hidden" accept="image/*" @change="handleImage($event)">
+                        
+                        <div x-show="!imagePreview">
+                            <div class="w-20 h-20 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-purple-400">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             </div>
+                            <h3 class="text-2xl font-bold mb-2">Upload an Image</h3>
+                            <p class="text-gray-400 mb-8">Drag & drop your JPG/PNG here, or browse files.</p>
+                            <button @click="triggerImageUpload" class="px-8 py-3 rounded-full bg-white text-gray-900 font-bold hover:bg-gray-200 transition-colors transform hover:scale-105 active:scale-95">
+                                Select Image
+                            </button>
+                        </div>
 
-                            <div id="imageDrop"
-                                class="group relative rounded-2xl border-2 border-dashed border-white/15 bg-black/20 p-10 md:p-14 text-center transition
-                       hover:border-white/25 hover:bg-black/25"
-                                role="button" tabindex="0">
-                                <input id="imageInput" name="image" type="file" accept="image/png,image/jpeg" class="hidden" required />
-
-                                <!-- Default content -->
-                                <div id="imageEmpty" class="space-y-4">
-                                    <div
-                                        class="mx-auto h-16 w-16 rounded-2xl bg-white/5 flex items-center justify-center">
-                                        <!-- Image icon (inline SVG) -->
-                                        <svg class="h-9 w-9 text-white/50" viewBox="0 0 24 24" fill="none"
-                                            aria-hidden="true">
-                                            <path
-                                                d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7Z"
-                                                stroke="currentColor" stroke-width="1.5" />
-                                            <path
-                                                d="M8 14l2.2-2.2a1 1 0 0 1 1.4 0L14 14.2a1 1 0 0 0 1.4 0L16 13.6a1 1 0 0 1 1.4 0L20 16"
-                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                            <path d="M15.5 9.2a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0Z"
-                                                fill="currentColor" opacity="0.7" />
-                                        </svg>
-                                    </div>
-
-                                    <div class="text-white/85 text-base">Drag &amp; drop your photo here</div>
-                                    <div class="text-white/40 text-sm">or click to browse</div>
-
-                                    <button id="imageBrowseBtn" type="button"
-                                        class="mt-2 inline-flex items-center justify-center rounded-full bg-white/10 px-6 py-2 text-sm text-white/90
-                           hover:bg-white/15 border border-white/10">
-                                        Browse Files
-                                    </button>
-
-                                    <div class="pt-2 text-xs text-white/30">Supports JPG, PNG</div>
-                                </div>
-
-                                <!-- Preview content -->
-                                <div id="imagePreviewWrap" class="hidden">
-                                    <div class="flex flex-col items-center gap-4">
-                                        <div
-                                            class="w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-black/30">
-                                            <img id="imagePreview" alt="Selected photo preview"
-                                                class="w-full h-[240px] object-contain bg-black/40" />
-                                        </div>
-
-                                        <div class="text-sm text-white/70">
-                                            <span class="font-medium text-white/85">Selected:</span>
-                                            <span id="imageMeta"></span>
-                                        </div>
-
-                                        <div class="flex flex-wrap gap-3 justify-center">
-                                            <button id="imageReplaceBtn" type="button"
-                                                class="rounded-full bg-white/10 px-5 py-2 text-sm text-white/90 hover:bg-white/15 border border-white/10">
-                                                Replace
-                                            </button>
-                                            <button id="imageRemoveBtn" type="button"
-                                                class="rounded-full bg-red-500/10 px-5 py-2 text-sm text-red-200 hover:bg-red-500/15 border border-red-500/20">
-                                                Remove
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Drop highlight -->
-                                <div id="imageDropHint"
-                                    class="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-emerald-400/30 transition">
+                        <div x-show="imagePreview" class="flex flex-col items-center">
+                            <div class="relative w-full max-w-md aspect-square rounded-xl overflow-hidden shadow-2xl border border-white/10 group bg-black/40 flex items-center justify-center">
+                                <img :src="imagePreview" class="max-w-full max-h-full object-contain">
+                                <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button @click="triggerImageUpload" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white border border-white/20 backdrop-blur-md">Change Image</button>
                                 </div>
                             </div>
-                            <div id="imageError" class="mt-2 text-center text-sm text-red-400">
-                                @error('image') {{ $message }} @enderror
-                            </div>
-
-                            <div class="mt-8 flex items-center justify-between">
-                                <div class="text-xs text-white/35">Step 1 of 3</div>
-                                <button id="toStep2" type="button" disabled
-                                    class="rounded-full bg-yellow-500/90 px-7 py-2.5 text-sm font-semibold text-black
-                         hover:bg-yellow-500 disabled:opacity-40 disabled:cursor-not-allowed">
-                                    Next
+                            <div class="mt-8">
+                                <button @click="step = 2" class="px-10 py-3 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all transform hover:-translate-y-1">
+                                    Continue &rarr;
                                 </button>
                             </div>
                         </div>
-                    </section>
+                    </div>
+                </div>
 
-                    <!-- STEP 2: AUDIO -->
-                    <section id="panel2" class="hidden">
-                        <div
-                            class="rounded-3xl border border-white/10 bg-white/[0.03] shadow-[0_20px_80px_rgba(0,0,0,0.55)] p-8">
-                            <div id="audioDrop"
-                                class="group relative rounded-2xl border-2 border-dashed border-white/15 bg-black/20 p-10 md:p-14 text-center transition
-                       hover:border-white/25 hover:bg-black/25"
-                                role="button" tabindex="0">
-                                <input id="audioInput" name="audio" type="file" accept=".mp3,.wav" class="hidden" required />
-
-                                <div id="audioEmpty" class="space-y-4">
-                                    <div
-                                        class="mx-auto h-16 w-16 rounded-2xl bg-white/5 flex items-center justify-center">
-                                        <!-- Audio icon -->
-                                        <svg class="h-9 w-9 text-white/50" viewBox="0 0 24 24" fill="none"
-                                            aria-hidden="true">
-                                            <path d="M9 18V6l10-2v12" stroke="currentColor" stroke-width="1.5"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" fill="currentColor"
-                                                opacity="0.7" />
-                                            <path d="M19 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" fill="currentColor"
-                                                opacity="0.7" />
-                                        </svg>
-                                    </div>
-
-                                    <div class="text-white/85 text-base">Drag &amp; drop your audio here</div>
-                                    <div class="text-white/40 text-sm">or click to browse</div>
-
-                                    <button id="audioBrowseBtn" type="button"
-                                        class="mt-2 inline-flex items-center justify-center rounded-full bg-white/10 px-6 py-2 text-sm text-white/90
-                           hover:bg-white/15 border border-white/10">
-                                        Browse Files
-                                    </button>
-
-                                    <div class="pt-2 text-xs text-white/30">Supports MP3, WAV</div>
-                                </div>
-
-                                <div id="audioPreviewWrap" class="hidden">
-                                    <div class="flex flex-col items-center gap-4">
-                                        <div
-                                            class="w-full max-w-lg rounded-2xl border border-white/10 bg-black/30 p-4">
-                                            <div class="text-sm text-white/70">
-                                                <span class="font-medium text-white/85">Selected:</span>
-                                                <span id="audioMeta"></span>
-                                            </div>
-                                            <audio id="audioPlayer" controls class="mt-3 w-full"></audio>
-                                        </div>
-
-                                        <div class="flex flex-wrap gap-3 justify-center">
-                                            <button id="audioReplaceBtn" type="button"
-                                                class="rounded-full bg-white/10 px-5 py-2 text-sm text-white/90 hover:bg-white/15 border border-white/10">
-                                                Replace
-                                            </button>
-                                            <button id="audioRemoveBtn" type="button"
-                                                class="rounded-full bg-red-500/10 px-5 py-2 text-sm text-red-200 hover:bg-red-500/15 border border-red-500/20">
-                                                Remove
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div id="audioDropHint"
-                                    class="pointer-events-none absolute inset-0 rounded-2xl ring-0 ring-emerald-400/30 transition">
-                                </div>
+                <!-- Step 2: Audio Upload -->
+                <div x-show="step === 2" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0" class="flex flex-col justify-center items-center h-full">
+                    <div class="w-full text-center" @dragover.prevent @drop.prevent="handleAudioDrop($event)">
+                        <input type="file" x-ref="audioInput" class="hidden" accept="audio/*" @change="handleAudio($event)">
+                        
+                        <div x-show="!audioFile">
+                            <div class="w-20 h-20 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-400">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
                             </div>
-                            <div id="audioError" class="mt-2 text-center text-sm text-red-400">
-                                @error('audio') {{ $message }} @enderror
-                            </div>
-
-                            <div class="mt-8 flex items-center justify-between">
-                                <button id="backTo1" type="button"
-                                    class="rounded-full bg-white/10 px-6 py-2.5 text-sm text-white/90 hover:bg-white/15 border border-white/10">
-                                    Back
+                            <h3 class="text-2xl font-bold mb-2">Add Your Audio</h3>
+                            <p class="text-gray-400 mb-8">Drag & drop MP3/WAV, or click to browse.</p>
+                            <div class="flex gap-4 justify-center">
+                                <button @click="step = 1" class="px-6 py-3 rounded-full bg-gray-800 text-gray-300 font-semibold hover:bg-gray-700 transition-colors">
+                                    &larr; Back
                                 </button>
+                                <button @click="triggerAudioUpload" class="px-8 py-3 rounded-full bg-white text-gray-900 font-bold hover:bg-gray-200 transition-colors transform hover:scale-105 active:scale-95">
+                                    Select Audio
+                                </button>
+                            </div>
+                        </div>
 
+                        <div x-show="audioFile" class="flex flex-col items-center w-full">
+                            <div class="w-full max-w-md p-6 rounded-2xl bg-white/5 border border-white/10 mb-8">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                                        🎵
+                                    </div>
+                                    <div class="text-left overflow-hidden">
+                                        <div class="font-medium text-white truncate" x-text="audioName"></div>
+                                        <div class="text-xs text-gray-500">Ready to upload</div>
+                                    </div>
+                                    <button @click="triggerAudioUpload" class="ml-auto text-xs text-blue-400 hover:text-blue-300 underline">Change</button>
+                                </div>
+                                <audio x-ref="audioPreview" controls class="w-full"></audio>
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <button @click="step = 1" class="px-6 py-3 rounded-full bg-gray-800 text-gray-300 font-semibold hover:bg-gray-700 transition-colors">
+                                    &larr; Back
+                                </button>
+                                <button @click="step = 3" class="px-10 py-3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all transform hover:-translate-y-1">
+                                    Review &rarr;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Review -->
+                <div x-show="step === 3" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0" class="flex flex-col h-full py-4">
+                    <h2 class="text-3xl font-bold text-center mb-10">Review Your Video</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-10 mb-12 items-start">
+                        <!-- Image Preview -->
+                        <div class="flex flex-col items-center">
+                            <div class="text-xs text-gray-500 uppercase tracking-widest mb-3 font-bold">Visual Asset</div>
+                            <div class="w-full aspect-square bg-black/60 rounded-2xl border border-white/10 overflow-hidden flex items-center justify-center shadow-inner">
+                                <img :src="imagePreview" class="max-w-full max-h-full object-contain">
+                            </div>
+                        </div>
+
+                        <!-- Audio Details -->
+                        <div class="flex flex-col justify-center h-full">
+                            <div class="text-xs text-gray-500 uppercase tracking-widest mb-3 font-bold">Audio Track</div>
+                            <div class="bg-white/5 rounded-2xl p-6 border border-white/10 flex flex-col gap-4">
                                 <div class="flex items-center gap-4">
-                                    <div class="text-xs text-white/35">Step 2 of 3</div>
-                                    <button id="toStep3" type="button" disabled
-                                        class="rounded-full bg-yellow-500/90 px-7 py-2.5 text-sm font-semibold text-black
-                           hover:bg-yellow-500 disabled:opacity-40 disabled:cursor-not-allowed">
-                                        Next
-                                    </button>
+                                    <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-xl">🔊</div>
+                                    <div class="overflow-hidden">
+                                        <div class="text-white font-bold truncate" x-text="audioName"></div>
+                                        <div class="text-gray-500 text-xs mt-0.5">MP4 Video will match this duration</div>
+                                    </div>
                                 </div>
+                                <p class="text-sm text-gray-400 leading-relaxed border-t border-white/5 pt-4">
+                                    The uploaded image will be looped to create a high-quality H.264 MP4 video. Perfect for social sharing.
+                                </p>
                             </div>
                         </div>
-                    </section>
+                    </div>
 
-                    <!-- STEP 3: CREATE -->
-                    <section id="panel3" class="hidden">
-                        <div
-                            class="rounded-3xl border border-white/10 bg-white/[0.03] shadow-[0_20px_80px_rgba(0,0,0,0.55)] p-8">
-                            <div class="grid gap-6 md:grid-cols-2">
-                                <div class="rounded-2xl border border-white/10 bg-black/20 overflow-hidden">
-                                    <div class="px-4 py-3 border-b border-white/10 text-sm text-white/80">Photo</div>
-                                    <img id="finalImage" class="w-full h-56 object-contain bg-black/40"
-                                        alt="Final selected photo" />
-                                </div>
+                    <div class="flex justify-center gap-6 pt-4">
+                        <button @click="step = 2" class="px-8 py-3 rounded-full bg-gray-800 text-gray-300 font-bold hover:bg-gray-700 transition-all">
+                            Edit Assets
+                        </button>
+                        <button @click="submit" class="px-12 py-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold shadow-lg shadow-green-500/30 hover:shadow-green-500/50 transition-all transform hover:scale-105 active:scale-95">
+                            ✨ Create Video Now
+                        </button>
+                    </div>
+                </div>
 
-                                <div class="rounded-2xl border border-white/10 bg-black/20">
-                                    <div class="px-4 py-3 border-b border-white/10 text-sm text-white/80">Audio</div>
-                                    <div class="p-4">
-                                        <div class="text-sm text-white/70">
-                                            <span class="font-medium text-white/85">File:</span>
-                                            <span id="finalAudioMeta"></span>
-                                        </div>
-                                        <audio id="finalAudioPlayer" controls class="mt-3 w-full"></audio>
+                <!-- Step 4: Processing (Status) -->
+                <div x-show="step === 4" x-cloak x-transition:enter="transition ease-out duration-300" class="flex flex-col justify-center items-center h-full text-center">
+                    
+                    <!-- Uploading State -->
+                    <div x-show="uploading" class="w-full max-w-md">
+                        <div class="w-20 h-20 rounded-full border-4 border-white/10 border-t-purple-500 animate-spin mx-auto mb-8"></div>
+                        <h3 class="text-2xl font-bold mb-3 text-white">Uploading Your Media</h3>
+                        <p class="text-gray-400 mb-8">Securely sending files to our processing cloud...</p>
+                        <div class="w-full bg-gray-800 rounded-full h-2.5 overflow-hidden shadow-inner">
+                            <div class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300 shadow-[0_0_10px_rgba(147,51,234,0.5)]" :style="'width: ' + uploadProgress + '%'"></div>
+                        </div>
+                    </div>
 
-                                        <div class="mt-4 text-xs text-white/35">
-                                            Ready to generate your video.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Processing State -->
+                    <div x-show="!uploading && jobStatus !== 'completed' && jobStatus !== 'failed'">
+                        <div class="relative w-28 h-28 mx-auto mb-8">
+                            <div class="absolute inset-0 rounded-full border-4 border-white/5"></div>
+                            <div class="absolute inset-0 rounded-full border-4 border-t-green-400 border-r-green-400 border-b-transparent border-l-transparent animate-spin"></div>
+                            <div class="absolute inset-0 flex items-center justify-center text-5xl animate-pulse">⚙️</div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3 text-white" x-text="statusMessage"></h3>
+                        <p class="text-gray-400 max-w-xs mx-auto">Our workers are weaving your assets into a masterpiece. Stay close!</p>
+                    </div>
 
-                            <!-- Create controls -->
-                            <div class="mt-8 flex flex-col gap-4">
-                                <div id="createStatus"
-                                    class="hidden rounded-2xl border border-white/10 bg-black/20 p-4">
-                                    <div class="flex items-center justify-between gap-4">
-                                        <div class="text-sm text-white/80">
-                                            <span class="font-semibold">Uploading...</span>
-                                            <span class="text-white/50" id="createHint">Please wait</span>
-                                        </div>
-                                    </div>
-                                    <div class="mt-3 h-2 w-full rounded-full bg-white/10 overflow-hidden">
-                                        <div id="createBar" class="h-full w-full animate-pulse bg-emerald-400/80"></div>
-                                    </div>
-                                </div>
+                </div>
 
-                                <div class="flex items-center justify-between">
-                                    <button id="backTo2" type="button"
-                                        class="rounded-full bg-white/10 px-6 py-2.5 text-sm text-white/90 hover:bg-white/15 border border-white/10">
-                                        Back
-                                    </button>
-
-                                    <div class="flex items-center gap-4">
-                                        <div class="text-xs text-white/35">Step 3 of 3</div>
-                                        <button id="createBtn" type="button"
-                                            class="rounded-full bg-yellow-500/90 px-7 py-2.5 text-sm font-semibold text-black hover:bg-yellow-500">
-                                            Create Video
-                                        </button>
-                                    </div>
-                                </div>
+                <!-- Step 5: Result (Success/Fail) -->
+                <div x-show="step === 5" x-cloak x-transition:enter="transition ease-out duration-300" class="flex flex-col h-full py-4">
+                    <!-- Success -->
+                    <div x-show="jobStatus === 'completed'" class="flex flex-col items-center text-center h-full">
+                        <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center text-4xl mb-6 shadow-lg shadow-green-500/20 border border-green-500/30">
+                            🎉
+                        </div>
+                        <h3 class="text-3xl font-bold text-white mb-2">Video Ready!</h3>
+                        <p class="text-gray-400 mb-10">Your video has been generated and is ready to share.</p>
+                        
+                        <div class="w-full max-w-3xl flex justify-center mb-10">
+                            <div class="relative rounded-2xl overflow-hidden shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] border border-white/10 bg-black group flex justify-center w-full min-h-[300px]">
+                                <video :src="videoUrl" controls class="max-h-[60vh] w-auto object-contain"></video>
                             </div>
                         </div>
-                    </section>
-                </form>
-            </div>
 
-            <!-- Your Videos List -->
-            {{-- @if(isset($jobs) && $jobs->count() > 0)
-            <div class="mt-16 border-t border-white/10 pt-10">
-                <h3 class="text-xl font-semibold mb-6">Your Videos</h3>
-                <div class="overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03]">
-                    <table class="min-w-full divide-y divide-white/10 text-sm">
-                        <thead class="bg-white/5">
-                            <tr>
-                                <th class="px-6 py-3 text-left font-medium text-white/60">ID</th>
-                                <th class="px-6 py-3 text-left font-medium text-white/60">Status</th>
-                                <th class="px-6 py-3 text-left font-medium text-white/60">Duration</th>
-                                <th class="px-6 py-3 text-left font-medium text-white/60">Created</th>
-                                <th class="px-6 py-3 text-left font-medium text-white/60">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-white/10">
-                            @foreach ($jobs as $job)
-                                <tr data-job-id="{{ $job->id }}" class="hover:bg-white/5 transition">
-                                    <td class="px-6 py-4 text-white/80">#{{ $job->id }}</td>
-                                    <td class="px-6 py-4 status-badge">
-                                        @if ($job->status === 'pending')
-                                            <span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-500/20">Pending</span>
-                                        @elseif ($job->status === 'processing')
-                                            <span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20">Processing</span>
-                                        @elseif ($job->status === 'completed')
-                                            <span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Completed</span>
-                                        @else
-                                            <span class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-red-500/10 text-red-300 border border-red-500/20">Failed</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 text-white/60 duration-cell">
-                                        {{ $job->duration ? gmdate('i:s', $job->duration) : '-' }}
-                                    </td>
-                                    <td class="px-6 py-4 text-white/60">
-                                        {{ $job->created_at->diffForHumans() }}
-                                    </td>
-                                    <td class="px-6 py-4 font-medium space-x-2 actions-cell">
-                                        @if ($job->isCompleted())
-                                            <a href="{{ route('make-a-video.download', $job) }}" class="text-emerald-400 hover:text-emerald-300">Download</a>
-                                            <a href="{{ route('make-a-video.stream', $job) }}" target="_blank" class="text-blue-400 hover:text-blue-300">Preview</a>
-                                        @endif
-                                        
-                                        @if ($job->isFailed())
-                                            <span class="text-red-400 cursor-help" title="{{ $job->error_message }}">Error</span>
-                                        @endif
+                        <div class="flex flex-wrap gap-4 justify-center w-full">
+                            <a :href="downloadUrl" class="px-8 py-4 rounded-full bg-white text-gray-900 font-bold hover:bg-gray-200 transition-all flex items-center gap-2 shadow-xl hover:-translate-y-1">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                Download MP4
+                            </a>
+                            
+                            <button @click="shareVideo" class="px-8 py-4 rounded-full bg-blue-600 text-white font-bold hover:bg-blue-500 transition-all flex items-center gap-2 shadow-xl hover:-translate-y-1">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                                Share
+                            </button>
 
-                                        <form action="{{ route('make-a-video.destroy', $job) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this video?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-400 hover:text-red-300">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            <button @click="reset" class="px-8 py-4 rounded-full bg-white/5 text-white font-semibold hover:bg-white/10 transition-all border border-white/10 backdrop-blur-sm">
+                                Create New
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Failed -->
+                    <div x-show="jobStatus === 'failed'" class="flex flex-col justify-center items-center h-full text-center">
+                        <div class="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center text-4xl mb-6 border border-red-500/30">
+                            ❌
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3">Processing Failed</h3>
+                        <p class="text-red-300 mb-10 max-w-md mx-auto leading-relaxed" x-text="errorMessage"></p>
+                        
+                        <button @click="step = 1; jobStatus='idle'; errorMessage=''" class="px-10 py-3 rounded-full bg-white/10 text-white font-bold hover:bg-white/20 transition-all border border-white/10">
+                            Try Again
+                        </button>
+                    </div>
                 </div>
-                <!-- Pagination -->
-                <div class="mt-4">
-                    {{ $jobs->links() }}
-                </div>
-            </div>
-            @endif --}}
 
+            </div>
         </div>
     </div>
 
     @push('scripts')
-        <script>
-            window.processingJobs = @json(json_decode($processingJobs ?? '[]'));
-        </script>
-        @vite(['resources/js/make-a-video.js', 'resources/js/job-status.js'])
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('videoWizard', () => ({
+                step: 1,
+                imageFile: null,
+                imagePreview: null,
+                audioFile: null,
+                audioName: null,
+                uploading: false,
+                uploadProgress: 0,
+                jobId: null,
+                jobStatus: 'idle', 
+                statusMessage: '',
+                errorMessage: '',
+                videoUrl: null,
+                downloadUrl: null,
+
+                triggerImageUpload() { this.$refs.imageInput.click(); },
+
+                handleImage(event) { this.processImage(event.target.files[0]); },
+                handleImageDrop(event) { this.processImage(event.dataTransfer.files[0]); },
+
+                processImage(file) {
+                    if (!file) return;
+                    if (!file.type.startsWith('image/')) {
+                        this.errorMessage = "Please select a valid image file.";
+                        return;
+                    }
+                    if (file.size > 10 * 1024 * 1024) {
+                        this.errorMessage = "Image is too large (Max 10MB).";
+                        return;
+                    }
+                    
+                    this.errorMessage = '';
+                    this.imageFile = file;
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => { this.imagePreview = e.target.result; };
+                    reader.readAsDataURL(file);
+                },
+
+                triggerAudioUpload() { this.$refs.audioInput.click(); },
+
+                handleAudio(event) { this.processAudio(event.target.files[0]); },
+                handleAudioDrop(event) { this.processAudio(event.dataTransfer.files[0]); },
+
+                processAudio(file) {
+                    if (!file) return;
+                    // Loose check for audio types
+                    if (!file.type.startsWith('audio/') && !file.name.match(/\.(mp3|wav|m4a)$/i)) {
+                        this.errorMessage = "Please select a valid audio file.";
+                        return;
+                    }
+                    
+                    this.errorMessage = '';
+                    this.audioFile = file;
+                    this.audioName = file.name;
+                    
+                    const url = URL.createObjectURL(file);
+                    this.$nextTick(() => {
+                        if(this.$refs.audioPreview) {
+                            this.$refs.audioPreview.src = url;
+                        }
+                    });
+                },
+
+                reset() {
+                    this.step = 1;
+                    this.imageFile = null;
+                    this.imagePreview = null;
+                    this.audioFile = null;
+                    this.audioName = null;
+                    this.uploading = false;
+                    this.jobId = null;
+                    this.jobStatus = 'idle';
+                    this.videoUrl = null;
+                    this.downloadUrl = null;
+                    this.errorMessage = '';
+                },
+
+                async submit() {
+                    if (!this.imageFile || !this.audioFile) return;
+                    
+                    this.step = 4;
+                    this.uploading = true;
+                    this.uploadProgress = 0;
+                    this.statusMessage = 'Uploading your assets...';
+                    
+                    const formData = new FormData();
+                    formData.append('image', this.imageFile);
+                    formData.append('audio', this.audioFile);
+                    
+                    try {
+                        const progressInterval = setInterval(() => {
+                            if (this.uploadProgress < 90) this.uploadProgress += 10;
+                        }, 200);
+
+                        const response = await fetch('{{ route('make-a-video.upload') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: formData
+                        });
+                        
+                        clearInterval(progressInterval);
+                        
+                        if (!response.ok) {
+                            const data = await response.json();
+                            throw new Error(data.message || 'Upload failed');
+                        }
+                        
+                        const data = await response.json();
+                        this.uploadProgress = 100;
+                        this.jobId = data.job_id;
+                        this.startPolling();
+                        
+                    } catch (e) {
+                        this.uploading = false;
+                        this.step = 3;
+                        this.errorMessage = e.message;
+                    }
+                },
+                
+                startPolling() {
+                    this.uploading = false;
+                    this.jobStatus = 'pending';
+                    this.statusMessage = 'Queued for processing...';
+                    
+                    const poll = setInterval(async () => {
+                        try {
+                            const res = await fetch(`/make-a-video/${this.jobId}/status`);
+                            if (!res.ok) throw new Error('Status check failed');
+                            
+                            const data = await res.json();
+                            
+                            if (data.status === 'processing') {
+                                this.jobStatus = 'processing';
+                                this.statusMessage = 'Rendering your video (this usually takes 10-30s)...';
+                            } else if (data.status === 'completed') {
+                                clearInterval(poll);
+                                this.jobStatus = 'completed';
+                                this.videoUrl = `/make-a-video/${this.jobId}/stream`;
+                                this.downloadUrl = `/make-a-video/${this.jobId}/download`;
+                                this.step = 5;
+                            } else if (data.status === 'failed') {
+                                clearInterval(poll);
+                                this.jobStatus = 'failed';
+                                this.errorMessage = data.error_message || 'Video processing failed.';
+                                this.step = 5;
+                            }
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }, 2000);
+                },
+
+                async shareVideo() {
+                    if (!this.videoUrl) return;
+                    
+                    // Construct absolute URL for sharing
+                    const shareUrl = window.location.origin + this.downloadUrl;
+                    
+                    if (navigator.share) {
+                        try {
+                            await navigator.share({
+                                title: 'My SnapMusic Video',
+                                text: 'Check out this video I made with SnapMusic!',
+                                url: shareUrl
+                            });
+                        } catch (err) {
+                            console.error('Error sharing:', err);
+                        }
+                    } else {
+                        // Fallback to clipboard copy
+                        try {
+                            await navigator.clipboard.writeText(shareUrl);
+                            alert('Video link copied to clipboard!');
+                        } catch (err) {
+                            console.error('Failed to copy:', err);
+                        }
+                    }
+                }
+            }));
+        });
+    </script>
     @endpush
 </x-app-layout>

@@ -10,7 +10,7 @@
     </div>
 
     <!-- ================= HERO ================= -->
-    <section class="pt-32 pb-20 text-center">
+    <section class="pt-12 pb-20 text-center">
         <div class="max-w-4xl mx-auto px-6">
             <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
                 Under the <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 animate-gradient-x">Hood.</span>

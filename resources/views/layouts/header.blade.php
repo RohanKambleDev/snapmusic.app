@@ -1,16 +1,16 @@
 <!-- ================= HEADER ================= -->
 @php
-    $isDark = request()->is('/') || request()->routeIs('how-it-works.*') || request()->routeIs('use-case.*') || request()->routeIs('login') || request()->routeIs('register');
+    $isDark = true; // Global dark/transparent header
     $navBaseClass = 'transition-all duration-300 hover:scale-105';
-    $navTextClass = $isDark ? "$navBaseClass text-gray-400 hover:text-white" : "$navBaseClass text-gray-600 hover:text-black";
-    $activeClass = $isDark ? 'text-white font-semibold !opacity-100 after:content-[\'\'] after:block after:h-0.5 after:w-full after:bg-purple-500 after:mt-1' : 'text-black font-semibold !opacity-100 after:content-[\'\'] after:block after:h-0.5 after:w-full after:bg-purple-600 after:mt-1';
-    $logoClass = $isDark ? 'fill-white text-white' : 'fill-black text-black';
-    $logoTextClass = $isDark ? 'text-white' : 'text-gray-900';
+    $navTextClass = "$navBaseClass text-gray-400 hover:text-white";
+    $activeClass = 'text-white font-semibold !opacity-100 after:content-[\'\'] after:block after:h-0.5 after:w-full after:bg-purple-500 after:mt-1';
+    $logoClass = 'fill-white text-white';
+    $logoTextClass = 'text-white';
 @endphp
 
 <header x-data="{ mobileMenuOpen: false, scrolled: false }" 
         @scroll.window="scrolled = (window.pageYOffset > 20)"
-        :class="{ '{{ $isDark ? 'bg-gray-900/80 backdrop-blur-md border-b border-white/10' : 'bg-white/90 backdrop-blur-md shadow-sm' }}': scrolled, 'bg-transparent': !scrolled }"
+        :class="{ 'bg-gray-900/80 backdrop-blur-md border-b border-white/10 shadow-lg': scrolled, 'bg-transparent': !scrolled }"
         class="fixed top-0 left-0 w-full z-50 transition-all duration-300 px-6 py-4">
   
   <div class="max-w-7xl mx-auto flex items-center justify-between">

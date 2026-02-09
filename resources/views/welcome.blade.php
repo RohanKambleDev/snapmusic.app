@@ -11,7 +11,7 @@
     </div>
 
     <!-- ================= HERO ================= -->
-    <section class="relative pt-24 pb-32 overflow-hidden">
+    <section class="relative pt-8 pb-32 overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-16 items-center">
             
             <!-- Left: Text Content -->

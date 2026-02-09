@@ -17,7 +17,9 @@
     <body class="font-sans antialiased text-gray-900">
         @if (request()->routeIs('login') || request()->routeIs('register'))
             @include('layouts.header')
-            {{ $slot }}
+            <div class="pt-24">
+                {{ $slot }}
+            </div>
         @else
             <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
                 <div>
