@@ -23,15 +23,50 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             <!-- Notifications -->
-            <div class="mb-8" x-data="{ showSuccess: true, showCompleted: true, showError: true, showErrors: true }">
-                @if (session('success'))
-                    <div x-show="showSuccess" class="relative rounded-2xl bg-green-500/10 border border-green-500/20 p-4 text-green-200 mb-4 backdrop-blur-md">
-                        <div class="pr-8">{{ session('success') }}</div>
-                        <button @click="showSuccess = false" class="absolute top-4 right-4 text-green-400 hover:text-white">
+            <div class="mb-8 space-y-4" x-data="{ 
+                notifications: [],
+                add(msg, type = 'success', duration = 5000) {
+                    const id = Date.now();
+                    this.notifications.push({ id, msg, type });
+                    if (duration) setTimeout(() => this.remove(id), duration);
+                },
+                remove(id) {
+                    this.notifications = this.notifications.filter(n => n.id !== id);
+                }
+            }"
+            @if(session('success')) x-init="add('{{ session('success') }}', 'success', 5000)" @endif
+            @if(session('error')) x-init="add('{{ session('error') }}', 'error', 10000)" @endif
+            >
+                <template x-for="note in notifications" :key="note.id">
+                    <div x-show="true" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 transform -translate-y-2"
+                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100 transform translate-y-0"
+                         x-transition:leave-end="opacity-0 transform -translate-y-2"
+                         class="relative rounded-2xl p-4 border backdrop-blur-md shadow-lg flex items-start gap-3"
+                         :class="{
+                             'bg-green-500/10 border-green-500/20 text-green-200': note.type === 'success',
+                             'bg-red-500/10 border-red-500/20 text-red-200': note.type === 'error'
+                         }">
+                        
+                        <div class="flex-shrink-0 mt-0.5">
+                            <template x-if="note.type === 'success'">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </template>
+                            <template x-if="note.type === 'error'">
+                                <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </template>
+                        </div>
+
+                        <div class="flex-1 text-sm font-medium" x-text="note.msg"></div>
+
+                        <button @click="remove(note.id)" class="text-current opacity-50 hover:opacity-100 transition-opacity">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
-                @endif
+                </template>
 
                 @if (session('video_completed'))
                     @php $data = session('video_completed'); @endphp

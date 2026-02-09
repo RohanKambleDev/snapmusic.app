@@ -292,7 +292,7 @@ class VideoController extends Controller
         $videoJob->delete();
 
         return redirect()
-            ->route('make-a-video.index')
+            ->back()
             ->with('success', 'Video deleted successfully');
     }
 }
