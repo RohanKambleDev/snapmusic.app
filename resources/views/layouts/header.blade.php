@@ -1,6 +1,6 @@
 <!-- ================= HEADER ================= -->
 @php
-    $isDark = request()->is('/') || request()->routeIs('how-it-works.*') || request()->routeIs('use-case.*');
+    $isDark = request()->is('/') || request()->routeIs('how-it-works.*') || request()->routeIs('use-case.*') || request()->routeIs('login') || request()->routeIs('register');
     $navBaseClass = 'transition-all duration-300 hover:scale-105';
     $navTextClass = $isDark ? "$navBaseClass text-gray-400 hover:text-white" : "$navBaseClass text-gray-600 hover:text-black";
     $activeClass = $isDark ? 'text-white font-semibold !opacity-100 after:content-[\'\'] after:block after:h-0.5 after:w-full after:bg-purple-500 after:mt-1' : 'text-black font-semibold !opacity-100 after:content-[\'\'] after:block after:h-0.5 after:w-full after:bg-purple-600 after:mt-1';
