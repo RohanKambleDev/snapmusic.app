@@ -26,13 +26,13 @@ class UploadMediaRequest extends FormRequest
                 'required',
                 'file',
                 'mimes:jpg,jpeg,png',
-                'max:2048', // 2MB in kilobytes to match system php.ini
+                'max:10240', // 10MB
             ],
             'audio' => [
                 'required',
                 'file',
                 'mimes:mp3,wav',
-                'max:2048', // 2MB in kilobytes to match system php.ini
+                'max:10240', // 10MB
             ],
         ];
     }
@@ -47,10 +47,10 @@ class UploadMediaRequest extends FormRequest
         return [
             'image.required' => 'Please upload an image file.',
             'image.mimes' => 'The image must be a JPG or PNG file.',
-            'image.max' => 'The image file size must not exceed 2MB.',
+            'image.max' => 'The image file size must not exceed 10MB.',
             'audio.required' => 'Please upload an audio file.',
             'audio.mimes' => 'The audio must be an MP3 or WAV file.',
-            'audio.max' => 'The audio file size must not exceed 2MB.',
+            'audio.max' => 'The audio file size must not exceed 10MB.',
         ];
     }
 

@@ -315,6 +315,10 @@
                         this.errorMessage = "Please select a valid audio file.";
                         return;
                     }
+                    if (file.size > 10 * 1024 * 1024) {
+                        this.errorMessage = "Audio file is too large (Max 10MB).";
+                        return;
+                    }
                     
                     this.errorMessage = '';
                     this.audioFile = file;

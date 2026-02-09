@@ -15,6 +15,6 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (\Illuminate\Http\Exceptions\PostTooLargeException $e, \Illuminate\Http\Request $request) {
-            return redirect()->route('videos.index', ['upload_error' => '413']);
+            return redirect()->route('make-a-video.index', ['upload_error' => '413']);
         });
     })->create();
