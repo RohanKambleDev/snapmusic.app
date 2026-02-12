@@ -156,6 +156,147 @@ class VideoProcessingService
     }
 
     /**
+     * Split audio file into smaller chunks
+     *
+     * @param string $audioPath Absolute path to the audio file
+     * @param int $segmentDuration Duration of each segment in seconds
+     * @param string $outputDir Directory to store segments
+     * @return array List of absolute paths to the audio segments
+     * @throws \Exception
+     */
+    public function splitAudio(string $audioPath, int $segmentDuration, string $outputDir): array
+    {
+        if (!file_exists($outputDir)) {
+            mkdir($outputDir, 0755, true);
+        }
+
+        // Output filename pattern
+        $outputPattern = $outputDir . '/audio_part_%03d.mp3';
+
+        // ffmpeg -i input.mp3 -f segment -segment_time 60 -c copy out%03d.mp3
+        $command = [
+            'ffmpeg',
+            '-i', $audioPath,
+            '-f', 'segment',
+            '-segment_time', (string) $segmentDuration,
+            '-c', 'copy',
+            $outputPattern,
+        ];
+
+        try {
+            $process = new Process($command);
+            $process->setTimeout(600);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                Log::error('Audio splitting failed', [
+                    'error' => $process->getErrorOutput(),
+                ]);
+                throw new ProcessFailedException($process);
+            }
+
+            // Get generated files
+            $files = glob($outputDir . '/audio_part_*.mp3');
+            sort($files); // Ensure correct order
+
+            return $files;
+        } catch (ProcessFailedException $e) {
+            throw new \Exception('Audio splitting failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Concatenate multiple video files into one
+     *
+     * @param array $videoPaths List of absolute paths to video files
+     * @param string $outputPath Absolute path for the output video
+     * @return bool Success status
+     * @throws \Exception
+     */
+    public function concatVideos(array $videoPaths, string $outputPath): bool
+    {
+        if (empty($videoPaths)) {
+            throw new \Exception('No videos to concatenate');
+        }
+
+        // Create a temporary list file for ffmpeg concat demuxer
+        $listContent = '';
+        foreach ($videoPaths as $path) {
+            $listContent .= "file '" . $path . "'\n";
+        }
+
+        $listFile = sys_get_temp_dir() . '/ffmpeg_concat_list_' . uniqid() . '.txt';
+        file_put_contents($listFile, $listContent);
+
+        // ffmpeg -f concat -safe 0 -i list.txt -c copy output.mp4
+        $command = [
+            'ffmpeg',
+            '-f', 'concat',
+            '-safe', '0',
+            '-i', $listFile,
+            '-c', 'copy',
+            '-y',
+            $outputPath,
+        ];
+
+        try {
+            $process = new Process($command);
+            $process->setTimeout(600);
+            $process->run();
+
+            // Clean up list file
+            if (file_exists($listFile)) {
+                unlink($listFile);
+            }
+
+            if (!$process->isSuccessful()) {
+                Log::error('Video concatenation failed', [
+                    'error' => $process->getErrorOutput(),
+                ]);
+                throw new ProcessFailedException($process);
+            }
+
+            return file_exists($outputPath);
+        } catch (ProcessFailedException $e) {
+            // Clean up list file
+            if (file_exists($listFile)) {
+                unlink($listFile);
+            }
+            throw new \Exception('Video concatenation failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Resize image to a manageable size (e.g. 1920x1080)
+     *
+     * @param string $imagePath
+     * @param string $outputPath
+     * @return bool
+     */
+    public function resizeImage(string $imagePath, string $outputPath): bool
+    {
+        // ffmpeg -i input.jpg -vf "scale=iw*min(1920/iw\,1080/ih):ih*min(1920/iw\,1080/ih)" output.jpg
+        // actually just scale to fit 1920x1080 while keeping aspect ratio
+        $command = [
+            'ffmpeg',
+            '-i', $imagePath,
+            '-vf', 'scale=\'min(1920,iw)\':\'min(1080,ih)\':force_original_aspect_ratio=decrease',
+            '-y',
+            $outputPath,
+        ];
+
+        try {
+            $process = new Process($command);
+            $process->run();
+
+            return $process->isSuccessful() && file_exists($outputPath);
+        } catch (\Exception $e) {
+            Log::error('Image resizing failed', ['error' => $e->getMessage()]);
+            return false;
+        }
+    }
+
+    /**
      * Get the duration of an audio file in seconds
      *
      * @param string $audioPath Absolute path to the audio file

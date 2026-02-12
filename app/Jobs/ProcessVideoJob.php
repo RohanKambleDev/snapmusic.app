@@ -6,6 +6,7 @@ use App\Models\VideoJob;
 use App\Services\VideoProcessingService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,7 +14,7 @@ class ProcessVideoJob implements ShouldQueue
 {
     use Queueable;
 
-    public $timeout = 600; // 10 minutes timeout
+    public $timeout = 1800; // Increase timeout to 30 minutes for large files
     public $tries = 3; // Retry 3 times if failed
 
     /**
@@ -54,8 +55,85 @@ class ProcessVideoJob implements ShouldQueue
             $duration = $videoProcessor->getAudioDuration($audioPath);
             $this->videoJob->update(['duration' => (int) $duration]);
 
-            // Process video
-            $videoProcessor->generateVideo($imagePath, $audioPath, $absoluteVideoPath);
+            // Check file sizes for chunking (2MB = 2097152 bytes)
+            $isLargeFile = filesize($audioPath) > 2097152 || filesize($imagePath) > 2097152;
+            
+            if ($isLargeFile) {
+                Log::channel('snapmusic')->info('Processing large file(s)', [
+                    'video_job_id' => $this->videoJob->id,
+                    'audio_size' => filesize($audioPath),
+                    'image_size' => filesize($imagePath),
+                ]);
+
+                // 1. Handle large image resizing
+                if (filesize($imagePath) > 2097152) {
+                    $resizedImageName = 'resized_' . basename($imagePath);
+                    $resizedImagePath = dirname($imagePath) . '/' . $resizedImageName;
+                    
+                    if ($videoProcessor->resizeImage($imagePath, $resizedImagePath)) {
+                        Log::channel('snapmusic')->info('Image resized', ['path' => $resizedImagePath]);
+                        $imagePath = $resizedImagePath; // Use resized image
+                    } else {
+                        Log::channel('snapmusic')->warning('Image resize failed, using original');
+                    }
+                }
+
+                // 2. Handle large audio splitting
+                if (filesize($audioPath) > 2097152) {
+                    $chunkDir = dirname($audioPath) . '/chunks_' . $this->videoJob->id;
+                    
+                    try {
+                        // Split audio into 60s chunks
+                        $audioChunks = $videoProcessor->splitAudio($audioPath, 60, $chunkDir);
+                        
+                        $videoChunks = [];
+                        $totalChunks = count($audioChunks);
+
+                        foreach ($audioChunks as $index => $chunkPath) {
+                            $chunkNumber = $index + 1;
+                            $chunkVideoPath = $chunkDir . '/video_part_' . sprintf('%03d', $index) . '.mp4';
+                            
+                            Log::channel('snapmusic')->info("Processing chunk {$chunkNumber}/{$totalChunks}", [
+                                'video_job_id' => $this->videoJob->id
+                            ]);
+
+                            // Generate video segment
+                            $videoProcessor->generateVideo($imagePath, $chunkPath, $chunkVideoPath);
+                            $videoChunks[] = $chunkVideoPath;
+                        }
+
+                        // Concatenate video segments
+                        Log::channel('snapmusic')->info('Concatenating video segments', [
+                            'video_job_id' => $this->videoJob->id
+                        ]);
+                        $videoProcessor->concatVideos($videoChunks, $absoluteVideoPath);
+
+                    } catch (\Exception $e) {
+                        Log::channel('snapmusic')->error('Chunk processing failed', ['error' => $e->getMessage()]);
+                        throw $e;
+                    } finally {
+                        // Cleanup chunks directory
+                        if (isset($chunkDir) && File::exists($chunkDir)) {
+                            File::deleteDirectory($chunkDir);
+                        }
+                        // Cleanup resized image if it exists
+                        if (strpos($imagePath, 'resized_') !== false && file_exists($imagePath)) {
+                            unlink($imagePath);
+                        }
+                    }
+                } else {
+                    // Large image but small audio, process normally
+                    $videoProcessor->generateVideo($imagePath, $audioPath, $absoluteVideoPath);
+                    
+                    // Cleanup resized image
+                    if (strpos($imagePath, 'resized_') !== false && file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
+                }
+            } else {
+                // Normal processing for small files
+                $videoProcessor->generateVideo($imagePath, $audioPath, $absoluteVideoPath);
+            }
 
             // Generate Thumbnail
             $thumbnailFileName = 'thumb_' . $this->videoJob->id . '_' . time() . '.jpg';
@@ -81,8 +159,12 @@ class ProcessVideoJob implements ShouldQueue
                 'output_path' => $videoPath,
             ]);
 
-            // Delete source files after successful processing
-            $videoProcessor->deleteSourceFiles($imagePath, $audioPath);
+            // Delete source files after successful processing (original files)
+            // Note: $imagePath might be the resized one, so we need to ensure we delete the ORIGINAL source files
+            // The logic below uses $this->videoJob->image_path which is stored in DB, so it's correct.
+            $originalImagePath = Storage::path($this->videoJob->image_path);
+            $originalAudioPath = Storage::path($this->videoJob->audio_path);
+            $videoProcessor->deleteSourceFiles($originalImagePath, $originalAudioPath);
 
         } catch (\Exception $e) {
             // Mark job as failed
