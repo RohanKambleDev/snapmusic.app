@@ -83,6 +83,11 @@ class VideoProcessingService
 
             // Verify output file was created
             if (!file_exists($outputPath)) {
+                Log::error('Video file not created despite success exit code', [
+                    'output' => $process->getOutput(),
+                    'error' => $process->getErrorOutput(),
+                    'command' => $process->getCommandLine(),
+                ]);
                 throw new \Exception('Video file was not created');
             }
 
@@ -170,10 +175,12 @@ class VideoProcessingService
             mkdir($outputDir, 0755, true);
         }
 
-        // Output filename pattern
-        $outputPattern = $outputDir . '/audio_part_%03d.mp3';
+        $extension = pathinfo($audioPath, PATHINFO_EXTENSION) ?: 'mp3';
 
-        // ffmpeg -i input.mp3 -f segment -segment_time 60 -c copy out%03d.mp3
+        // Output filename pattern
+        $outputPattern = $outputDir . '/audio_part_%03d.' . $extension;
+
+        // ffmpeg -i input.ext -f segment -segment_time 60 -c copy out%03d.ext
         $command = [
             'ffmpeg',
             '-i', $audioPath,
@@ -196,7 +203,7 @@ class VideoProcessingService
             }
 
             // Get generated files
-            $files = glob($outputDir . '/audio_part_*.mp3');
+            $files = glob($outputDir . '/audio_part_*.' . $extension);
             sort($files); // Ensure correct order
 
             return $files;
