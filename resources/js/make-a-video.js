@@ -96,7 +96,7 @@ function setStep(step) {
 		pageTitle.textContent = "Upload Your Audio";
 		pageSubtitle.textContent = "";
 	} else {
-		pageTitle.textContent = "Create Your Video";
+		pageTitle.textContent = "Create Your Audio Image";
 		pageSubtitle.textContent = "";
 		syncFinalPreview();
 	}

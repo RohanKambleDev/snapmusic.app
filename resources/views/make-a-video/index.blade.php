@@ -13,9 +13,9 @@
             <!-- Header -->
             <div class="text-center mb-12">
                 <h1 class="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-                    Create Your Video
+                    Create Your Audio Image
                 </h1>
-                <p class="mt-4 text-gray-400">Turn your image and audio into a viral video in 3 simple steps.</p>
+                <p class="mt-4 text-gray-400">Turn your image and audio into a viral audio image in 3 simple steps.</p>
             </div>
 
             <!-- Wizard Progress -->
@@ -145,7 +145,7 @@
 
                 <!-- Step 3: Review -->
                 <div x-show="step === 3" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0" class="flex flex-col h-full py-4">
-                    <h2 class="text-3xl font-bold text-center mb-10">Review Your Video</h2>
+                    <h2 class="text-3xl font-bold text-center mb-10">Review Your Audio Image</h2>
                     
                     <div class="grid md:grid-cols-2 gap-10 mb-12 items-start">
                         <!-- Image Preview -->
@@ -179,7 +179,7 @@
                             Edit Assets
                         </button>
                         <button @click="submit" class="px-12 py-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold shadow-lg shadow-green-500/30 hover:shadow-green-500/50 transition-all transform hover:scale-105 active:scale-95">
-                            ✨ Create Video Now
+                            ✨ Create SnapMusic Now
                         </button>
                     </div>
                 </div>
@@ -217,8 +217,8 @@
                         <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center text-4xl mb-6 shadow-lg shadow-green-500/20 border border-green-500/30">
                             🎉
                         </div>
-                        <h3 class="text-3xl font-bold text-white mb-2">Video Ready!</h3>
-                        <p class="text-gray-400 mb-10">Your video has been generated and is ready to share.</p>
+                        <h3 class="text-3xl font-bold text-white mb-2">Audio Image Ready!</h3>
+                        <p class="text-gray-400 mb-10">Your audio image has been generated and is ready to share.</p>
                         
                         <div class="w-full max-w-3xl flex justify-center mb-10">
                             <div class="relative rounded-2xl overflow-hidden shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] border border-white/10 bg-black group flex justify-center w-full min-h-[300px]">
@@ -405,7 +405,7 @@
                             
                             if (data.status === 'processing') {
                                 this.jobStatus = 'processing';
-                                this.statusMessage = 'Rendering your video (this usually takes 10-30s)...';
+                                this.statusMessage = 'Rendering your audio image (this usually takes 10-30s)...';
                             } else if (data.status === 'completed') {
                                 clearInterval(poll);
                                 this.jobStatus = 'completed';

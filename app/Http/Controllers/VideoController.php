@@ -100,7 +100,7 @@ class VideoController extends Controller
 
                                 'success' => true,
 
-                                'message' => 'Video processing started',
+                                'message' => 'Audio image processing started',
 
                                 'job_id' => $videoJob->id,
 
@@ -114,7 +114,7 @@ class VideoController extends Controller
 
                             ->route('make-a-video.index')
 
-                            ->with('success', 'Your video is being processed! You will see it here once it\'s ready.');
+                            ->with('success', 'Your audio image is being processed! You will see it here once it\'s ready.');
 
                     } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::channel('snapmusic')->error('UPLOAD_ERR: File upload or job creation failed', [

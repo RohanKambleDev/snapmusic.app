@@ -22,8 +22,9 @@
                 </div>
                 
                 <h1 class="text-5xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1]">
-                    Turn Photos into <br />
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-400 to-purple-500 animate-gradient-x">Viral Videos</span>
+                    Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-400 to-purple-500 animate-gradient-x">Snap</span> <br />
+                    deserves a <br />
+                    meaningful <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-400 to-purple-500 animate-gradient-x">Music</span>
                 </h1>
 
                 <p class="mt-6 text-lg text-gray-400 max-w-xl mx-auto lg:mx-0 leading-relaxed">
@@ -33,7 +34,7 @@
                 <div class="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                     <a href="/make-a-video" class="group relative px-8 py-4 rounded-full bg-white text-gray-900 font-bold shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_-15px_rgba(255,255,255,0.5)] transition-all duration-300 hover:-translate-y-1">
                         <span class="relative z-10 flex items-center gap-2">
-                            Start Creating
+                            Create SnapMusic
                             <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                         </span>
                     </a>
@@ -160,7 +161,7 @@
                         <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-2xl mb-6 shadow-lg shadow-green-500/30">
                             ✨
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Export Video</h3>
+                        <h3 class="text-xl font-bold text-white mb-2">Export Audio Image</h3>
                         <p class="text-sm text-gray-400">Get a polished MP4 ready for TikTok, Reels, or Shorts.</p>
                     </div>
                 </div>

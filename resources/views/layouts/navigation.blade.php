@@ -160,7 +160,7 @@
         </x-nav-link>
     @endauth
     <a href="{{ route('make-a-video.index') }}" class="px-4 py-2 rounded-full bg-gradient-to-r from-yellow-400 to-green-400 text-black font-medium transition hover:shadow-md">
-      make a video
+      create snapmusic
     </a>
 
     <!-- Settings Dropdown -->
@@ -246,7 +246,7 @@
         </x-nav-link>
     @endauth
     <a href="{{ route('make-a-video.index') }}" class="mt-2 px-4 py-3 rounded-full bg-gradient-to-r from-yellow-400 to-green-400 text-black font-medium text-center shadow-lg" @click="mobileMenuOpen = false">
-      make a video
+      create snapmusic
     </a>
     <!-- Responsive Settings Options -->
         @auth

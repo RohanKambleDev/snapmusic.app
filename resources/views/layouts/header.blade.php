@@ -50,7 +50,7 @@
         @endauth
 
         <a href="{{ route('make-a-video.index') }}" class="px-5 py-2.5 rounded-full bg-white text-gray-900 font-semibold text-sm transition-all hover:bg-gray-100 hover:shadow-lg hover:-translate-y-0.5 border border-gray-200">
-            Create Video
+            Create SnapMusic
         </a>
 
         <!-- Settings Dropdown -->
@@ -138,7 +138,7 @@
 
         <div class="mt-2">
             <a href="{{ route('make-a-video.index') }}" class="block w-full text-center px-4 py-3 rounded-xl bg-gray-900 text-white font-semibold shadow-md">
-                Create Video
+                Create SnapMusic
             </a>
         </div>
   </div>

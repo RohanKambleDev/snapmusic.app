@@ -7,7 +7,7 @@
             <a href="{{ route('make-a-video.index') }}" class="group relative px-6 py-2.5 rounded-full bg-white text-gray-900 font-bold shadow-lg hover:shadow-white/20 hover:scale-105 transition-all duration-300">
                 <span class="flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    Create New Video
+                    Create SnapMusic
                 </span>
             </a>
         </div>
@@ -72,8 +72,8 @@
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                             <div>
-                                <p class="font-bold text-lg leading-tight text-white">Video Ready!</p>
-                                <p class="text-emerald-300/60 text-sm mt-0.5">Video #{{ $data['id'] }} processed successfully.</p>
+                                <p class="font-bold text-lg leading-tight text-white">Audio Image Ready!</p>
+                                <p class="text-emerald-300/60 text-sm mt-0.5">Audio Image #{{ $data['id'] }} processed successfully.</p>
                             </div>
                         </div>
                         <div class="flex gap-3 text-sm font-semibold w-full sm:w-auto justify-end">
@@ -98,7 +98,7 @@
                 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
                     <div>
                         <h3 class="text-xl font-bold text-white mb-1">Your Library</h3>
-                        <p class="text-gray-400 text-sm">Manage, filter, and organize your generated videos.</p>
+                        <p class="text-gray-400 text-sm">Manage, filter, and organize your generated audio images.</p>
                     </div>
                     
                     <form method="GET" action="{{ route('dashboard') }}" class="w-full lg:w-auto flex flex-col sm:flex-row gap-3">
@@ -182,7 +182,7 @@
                             <!-- Content -->
                             <div class="p-4 flex-1 flex flex-col">
                                 <div class="flex items-center justify-between mb-2">
-                                    <h4 class="font-bold text-white text-sm truncate mr-2">Video #{{ $job->id }}</h4>
+                                    <h4 class="font-bold text-white text-sm truncate mr-2">Audio Image #{{ $job->id }}</h4>
                                     
                                     <!-- Status Badge -->
                                     <div class="status-badge text-right ml-auto shrink-0">
@@ -217,10 +217,10 @@
                                         </a>
                                     @endif
 
-                                    <form action="{{ route('make-a-video.destroy', $job) }}" method="POST" class="{{ $job->isCompleted() ? '' : 'w-full' }}" onsubmit="return confirm('Permanently delete this video?');">
+                                    <form action="{{ route('make-a-video.destroy', $job) }}" method="POST" class="{{ $job->isCompleted() ? '' : 'w-full' }}" onsubmit="return confirm('Permanently delete this audio image?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" aria-label="Delete Video" class="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-red-500/5 hover:bg-red-500/10 text-xs font-medium text-red-400 transition-colors border border-red-500/10 hover:border-red-500/20" title="Delete Video">
+                                        <button type="submit" aria-label="Delete Audio Image" class="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-red-500/5 hover:bg-red-500/10 text-xs font-medium text-red-400 transition-colors border border-red-500/10 hover:border-red-500/20" title="Delete Audio Image">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             @if(!$job->isCompleted()) Delete @endif
                                         </button>
@@ -241,12 +241,12 @@
                     <div class="w-24 h-24 bg-gray-800/50 rounded-full flex items-center justify-center mb-6 ring-4 ring-white/5">
                         <svg class="w-10 h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2-2v8a2 2 0 002 2z"></path></svg>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">No videos found</h3>
+                    <h3 class="text-xl font-bold text-white mb-2">No audio images found</h3>
                     <p class="text-gray-400 max-w-sm mx-auto mb-8">
                         @if(request()->anyFilled(['search', 'status', 'date']))
-                            We couldn't find any videos matching your filters. Try adjusting your search criteria.
+                            We couldn't find any audio images matching your filters. Try adjusting your search criteria.
                         @else
-                            Start your journey by creating your first music video. It's fast, easy, and free.
+                            Start your journey by creating your first audio image. It's fast, easy, and free.
                         @endif
                     </p>
                     
@@ -256,7 +256,7 @@
                         </a>
                     @else
                         <a href="{{ route('make-a-video.index') }}" class="px-8 py-3 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold shadow-lg shadow-purple-600/20 hover:shadow-purple-600/40 hover:scale-105 transition-all">
-                            Create Video Now
+                            Create SnapMusic Now
                         </a>
                     @endif
                 </div>
