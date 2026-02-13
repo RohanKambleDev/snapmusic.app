@@ -35,9 +35,9 @@ class VideoController extends Controller
             $latestJob = VideoJob::find(session('latest_job_id'));
             if ($latestJob) {
                 if ($latestJob->status === 'failed') {
-                    session()->flash('error', $latestJob->error_message ?? 'Something went wrong');
+                    // No error message as per user request
                     session()->forget('latest_job_id');
-                    session()->forget('success'); // Clear the "processing started" message
+                    session()->forget('success');
                 } elseif ($latestJob->status === 'completed') {
                     session()->flash('video_completed', [
                         'id' => $latestJob->id,
@@ -153,8 +153,6 @@ class VideoController extends Controller
                 'download_url' => route('make-a-video.download', $videoJob),
                 'stream_url' => route('make-a-video.stream', $videoJob),
             ]);
-        } elseif ($videoJob->status === 'failed') {
-            session()->flash('error', $videoJob->error_message ?? 'Something went wrong');
         }
 
         return response()->json(['success' => true]);

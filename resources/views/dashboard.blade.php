@@ -209,18 +209,6 @@
                                 </div>
                                 <p class="text-[11px] text-gray-500 font-medium">{{ $job->created_at->format('M d, Y • h:i A') }}</p>
                                 
-                                @if($job->isFailed())
-                                    <div class="mt-2 p-2 rounded bg-red-500/5 border border-red-500/10 text-[10px] text-red-400/80 break-words line-clamp-2" title="{{ $job->error_message }}">
-                                        {{ $job->error_message }}
-                                    </div>
-                                @endif
-
-                                @if($job->isFailed())
-                                    <div class="mt-2 p-2 rounded bg-red-500/10 border border-red-500/20 text-xs text-red-300 break-words">
-                                        {{ Str::limit($job->error_message, 50) }}
-                                    </div>
-                                @endif
-                                
                                 <div class="mt-auto pt-4 flex items-center justify-between gap-2 border-t border-white/5">
                                     @if($job->isCompleted())
                                         <a href="{{ route('make-a-video.download', $job) }}" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-medium text-white transition-colors border border-white/5">
