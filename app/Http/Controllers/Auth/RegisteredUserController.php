@@ -45,6 +45,10 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        if ($request->session()->has('wizard.step')) {
+            return redirect()->route('make-a-video.index');
+        }
+
         return redirect(route('dashboard', absolute: false));
     }
 }

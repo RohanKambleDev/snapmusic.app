@@ -156,16 +156,15 @@
                 </div>
 
                 <!-- Step 3 -->
-                <div class="relative z-10 group">
-                    <div class="w-full aspect-[4/3] bg-gray-900/50 backdrop-blur-sm border border-white/10 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-green-500/50 hover:bg-gray-800/50 hover:-translate-y-2 shadow-lg hover:shadow-green-500/20">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-2xl mb-6 shadow-lg shadow-green-500/30">
-                            ✨
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Export Audio Image</h3>
-                        <p class="text-sm text-gray-400">Get a polished MP4 ready for TikTok, Reels, or Shorts.</p>
-                    </div>
-                </div>
-            </div>
+                                        <div class="relative z-10 group">
+                                    <div class="w-full aspect-[4/3] bg-gray-900/50 backdrop-blur-sm border border-white/10 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-green-500/50 hover:bg-gray-800/50 hover:-translate-y-2 shadow-lg hover:shadow-green-500/20">
+                                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-2xl mb-6 shadow-lg shadow-green-500/30">
+                                            ✨
+                                        </div>
+                                        <h3 class="text-xl font-bold text-white mb-2">Export SnapMusic</h3>
+                                        <p class="text-sm text-gray-400">Get a polished MP4 ready for TikTok, Reels, or Shorts.</p>
+                                    </div>
+                                </div>            </div>
         </div>
     </section>
 

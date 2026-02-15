@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UploadMediaRequest;
 use App\Jobs\ProcessVideoJob;
 use App\Models\VideoJob;
 use Illuminate\Http\Request;
@@ -12,7 +11,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class VideoController extends Controller
 {
     /**
-     * Display the upload form
+     * Display the wizard or upload form
      */
     public function index()
     {
@@ -22,12 +21,17 @@ class VideoController extends Controller
                 ->with('error', 'The uploaded files are too large. Maximum total size is ' . ini_get('post_max_size') . '.');
         }
 
-        $jobs = auth()->user()->videoJobs()
-            ->latest()
-            ->paginate(10);
+        $jobs = null;
+        $processingJobs = '[]';
 
-        if (isset($jobs)) {
-            $processingJobs = json_encode($jobs->whereIn('status', ['pending', 'processing'])->pluck('id')->toArray());
+        if (auth()->check()) {
+            $jobs = auth()->user()->videoJobs()
+                ->latest()
+                ->paginate(10);
+
+            if (isset($jobs)) {
+                $processingJobs = json_encode($jobs->whereIn('status', ['pending', 'processing'])->pluck('id')->toArray());
+            }
         }
 
         // Check for immediately failed/completed job from session
@@ -35,7 +39,6 @@ class VideoController extends Controller
             $latestJob = VideoJob::find(session('latest_job_id'));
             if ($latestJob) {
                 if ($latestJob->status === 'failed') {
-                    // No error message as per user request
                     session()->forget('latest_job_id');
                     session()->forget('success');
                 } elseif ($latestJob->status === 'completed') {
@@ -52,89 +55,138 @@ class VideoController extends Controller
             }
         }
 
-        return view('make-a-video.index', compact('jobs', 'processingJobs'));
+        $wizardData = session('wizard', []);
+
+        return view('make-a-video.index', compact('jobs', 'processingJobs', 'wizardData'));
     }
 
     /**
-     * Handle the media file upload
+     * Step 1: Upload Image
      */
-    public function upload(UploadMediaRequest $request)
+    public function storeStep1(Request $request)
     {
-        $user = auth()->user();
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+        ]);
 
         try {
-            // Store the uploaded files
-            $imagePath = $request->file('image')->store('uploads/images');
-            if (!$imagePath) {
-                throw new \Exception('Failed to store image file');
-            }
+            $sessionId = session()->getId();
+            $path = $request->file('image')->store("temp/{$sessionId}/images");
+            
+            session()->put('wizard.image', $path);
+            session()->put('wizard.image_name', $request->file('image')->getClientOriginalName());
+            session()->put('wizard.step', 2);
 
-            $audioPath = $request->file('audio')->store('uploads/audio');
-            if (!$audioPath) {
-                throw new \Exception('Failed to store audio file');
-            }
+            return response()->json(['success' => true, 'path' => $path]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Step 2: Upload Audio
+     */
+    public function storeStep2(Request $request)
+    {
+        $request->validate([
+            'audio' => 'required|mimes:mp3,wav|max:10240',
+        ]);
+
+        try {
+            $sessionId = session()->getId();
+            $path = $request->file('audio')->store("temp/{$sessionId}/audio");
+            
+            session()->put('wizard.audio', $path);
+            session()->put('wizard.audio_name', $request->file('audio')->getClientOriginalName());
+            session()->put('wizard.step', 3);
+
+            return response()->json(['success' => true, 'path' => $path]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Serve the temporary image preview
+     */
+    public function previewImage()
+    {
+        $path = session('wizard.image');
+
+        if (!$path || !Storage::exists($path)) {
+            abort(404);
+        }
+
+        return response()->file(Storage::path($path));
+    }
+
+    /**
+     * Final Step: Process Video
+     */
+    public function process(Request $request)
+    {
+        $user = auth()->user();
+        
+        $imagePath = session('wizard.image');
+        $audioPath = session('wizard.audio');
+
+        if (!$imagePath || !$audioPath || !Storage::exists($imagePath) || !Storage::exists($audioPath)) {
+             return response()->json(['success' => false, 'message' => 'Session expired or files missing. Please start over.'], 400);
+        }
+
+        try {
+            // Move files to permanent location
+            $newImagePath = 'uploads/images/' . basename($imagePath);
+            $newAudioPath = 'uploads/audio/' . basename($audioPath);
+            
+            // Ensure directories exist
+            Storage::makeDirectory('uploads/images');
+            Storage::makeDirectory('uploads/audio');
+
+            Storage::move($imagePath, $newImagePath);
+            Storage::move($audioPath, $newAudioPath);
 
             // Create a new video job record
             $videoJob = VideoJob::create([
                 'user_id' => $user->id,
-                'image_path' => $imagePath,
-                'audio_path' => $audioPath,
+                'image_path' => $newImagePath,
+                'audio_path' => $newAudioPath,
                 'status' => 'pending',
             ]);
 
-                        // Dispatch the job to the queue
+            // Dispatch the job to the queue
+            ProcessVideoJob::dispatch($videoJob);
 
-                        ProcessVideoJob::dispatch($videoJob);
+            // Track this job
+            session()->put('latest_job_id', $videoJob->id);
+            session()->forget('wizard');
 
-            
+            // Cleanup temp directory
+            $parts = explode('/', $imagePath);
+            if (count($parts) >= 2 && $parts[0] === 'temp') {
+                $tempSessionId = $parts[1];
+                if (preg_match('/^[a-zA-Z0-9,-]+$/', $tempSessionId)) {
+                    Storage::deleteDirectory("temp/{$tempSessionId}");
+                }
+            }
 
-                        // Track this job to handle immediate failures/completions
+            return response()->json([
+                'success' => true,
+                'message' => 'SnapMusic processing started',
+                'job_id' => $videoJob->id,
+            ]);
 
-                        session()->put('latest_job_id', $videoJob->id);
-
-            
-
-                        if ($request->wantsJson()) {
-
-                            return response()->json([
-
-                                'success' => true,
-
-                                'message' => 'Audio image processing started',
-
-                                'job_id' => $videoJob->id,
-
-                            ]);
-
-                        }
-
-            
-
-                        return redirect()
-
-                            ->route('make-a-video.index')
-
-                            ->with('success', 'Your audio image is being processed! You will see it here once it\'s ready.');
-
-                    } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::channel('snapmusic')->error('UPLOAD_ERR: File upload or job creation failed', [
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::channel('snapmusic')->error('PROCESS_ERR: Job creation failed', [
                 'user_id' => $user->id,
-                'image_name' => $request->file('image')?->getClientOriginalName(),
-                'audio_name' => $request->file('audio')?->getClientOriginalName(),
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'An error occurred while processing your request.',
-                ], 500);
-            }
-
-            return back()
-                ->withInput()
-                ->withErrors(['error' => 'An error occurred while processing your upload. Please try again.']);
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while processing your request.',
+            ], 500);
         }
     }
 
@@ -191,8 +243,6 @@ class VideoController extends Controller
 
         if (!$videoJob->thumbnail_path || !Storage::exists($videoJob->thumbnail_path)) {
             // Return a default placeholder or 404
-            // For now, let's return a generated placeholder or 404
-            // Ideally, we could redirect to a static asset: return redirect('/images/video-placeholder.png');
             abort(404, 'Thumbnail not found');
         }
 

@@ -23,10 +23,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-    // Video routes
-    Route::get('/make-a-video', [VideoController::class, 'index'])->name('make-a-video.index');
-    Route::post('/make-a-video/upload', [VideoController::class, 'upload'])->name('make-a-video.upload');
+// Video Wizard Routes (Public & Protected)
+Route::get('/make-a-video', [VideoController::class, 'index'])->name('make-a-video.index');
+Route::get('/make-a-video/preview-image', [VideoController::class, 'previewImage'])->name('make-a-video.preview-image');
+Route::post('/make-a-video/step-1', [VideoController::class, 'storeStep1'])->name('make-a-video.step1');
+Route::post('/make-a-video/step-2', [VideoController::class, 'storeStep2'])->name('make-a-video.step2');
+
+Route::middleware('auth')->group(function () {
+    // Final processing step (requires auth)
+    Route::post('/make-a-video/process', [VideoController::class, 'process'])->name('make-a-video.process');
+    
+    // Status & Management
     Route::get('/make-a-video/{videoJob}/status', [VideoController::class, 'status'])->name('make-a-video.status');
     Route::post('/make-a-video/{videoJob}/notify-completion', [VideoController::class, 'notifyCompletion'])->name('make-a-video.notify-completion');
     Route::get('/make-a-video/{videoJob}/download', [VideoController::class, 'download'])->name('make-a-video.download');
