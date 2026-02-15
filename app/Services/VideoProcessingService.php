@@ -41,23 +41,42 @@ class VideoProcessingService
             throw new \Exception('Unable to determine audio duration');
         }
 
+        // Define watermark path
+        $watermarkPath = storage_path('app/public/watermark.png');
+        $hasWatermark = file_exists($watermarkPath);
+
         // Build FFmpeg command
-        // -loop 1: Loop the image
-        // -i: Input file
-        // -vf: Video filter to ensure dimensions are divisible by 2 (required by libx264)
-        // -c:v libx264: Video codec
-        // -tune stillimage: Optimize for still images
-        // -c:a aac: Audio codec
-        // -b:a 192k: Audio bitrate
-        // -pix_fmt yuv420p: Pixel format for compatibility
-        // -shortest: End video when audio ends
-        // -y: Overwrite output file without asking
         $command = [
             'ffmpeg',
             '-loop', '1',
             '-i', $imagePath,
             '-i', $audioPath,
-            '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2',
+        ];
+
+        if ($hasWatermark) {
+            $command[] = '-i';
+            $command[] = $watermarkPath;
+
+            // Complex filter for watermark
+            // [0:v] Scale main video to even dimensions [bg]
+            // [2:v][bg] Scale watermark to 20% of background width [wm][bg_ref]
+            // [wm] Set opacity to 0.5 [wm_trans]
+            // [bg_ref][wm_trans] Overlay at bottom-right with 10px padding
+            $filterComplex = '[0:v]scale=trunc(iw/2)*2:trunc(ih/2)*2[bg];' .
+                             '[2:v][bg]scale2ref=w=iw*0.2:h=-1[wm][bg_ref];' .
+                             '[wm]format=rgba,colorchannelmixer=aa=0.5[wm_trans];' .
+                             '[bg_ref][wm_trans]overlay=W-w-10:H-h-10:format=auto';
+            
+            $command[] = '-filter_complex';
+            $command[] = $filterComplex;
+        } else {
+            // Original simple filter
+            $command[] = '-vf';
+            $command[] = 'scale=trunc(iw/2)*2:trunc(ih/2)*2';
+        }
+
+        // Common output options
+        array_push($command,
             '-c:v', 'libx264',
             '-tune', 'stillimage',
             '-c:a', 'aac',
@@ -65,8 +84,8 @@ class VideoProcessingService
             '-pix_fmt', 'yuv420p',
             '-shortest',
             '-y',
-            $outputPath,
-        ];
+            $outputPath
+        );
 
         try {
             $process = new Process($command);
