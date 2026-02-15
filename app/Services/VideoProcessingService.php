@@ -9,6 +9,9 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class VideoProcessingService
 {
+    private string $ytDlpBinary = 'yt-dlp';
+    private string $ffmpegBinary = 'ffmpeg';
+
     /**
      * Generate a video by combining an image and audio file using FFmpeg
      *
@@ -47,7 +50,7 @@ class VideoProcessingService
 
         // Build FFmpeg command
         $command = [
-            'ffmpeg',
+            $this->ffmpegBinary,
             '-loop', '1',
             '-i', $imagePath,
             '-i', $audioPath,
@@ -137,7 +140,7 @@ class VideoProcessingService
         // -ss 00:00:01: Seek to 1 second
         // -vframes 1: Output only 1 frame
         $command = [
-            'ffmpeg',
+            $this->ffmpegBinary,
             '-y',
             '-i', $videoPath,
             '-ss', '00:00:01',
@@ -152,7 +155,7 @@ class VideoProcessingService
             if (!$process->isSuccessful()) {
                 // If seeking failed (maybe video is < 1s), try grabbing the first frame
                 $fallbackCommand = [
-                    'ffmpeg',
+                    $this->ffmpegBinary,
                     '-y',
                     '-i', $videoPath,
                     '-vframes', '1',
@@ -201,7 +204,7 @@ class VideoProcessingService
 
         // ffmpeg -i input.ext -f segment -segment_time 60 -c copy out%03d.ext
         $command = [
-            'ffmpeg',
+            $this->ffmpegBinary,
             '-i', $audioPath,
             '-f', 'segment',
             '-segment_time', (string) $segmentDuration,
@@ -256,7 +259,7 @@ class VideoProcessingService
 
         // ffmpeg -f concat -safe 0 -i list.txt -c copy output.mp4
         $command = [
-            'ffmpeg',
+            $this->ffmpegBinary,
             '-f', 'concat',
             '-safe', '0',
             '-i', $listFile,
@@ -304,7 +307,7 @@ class VideoProcessingService
         // ffmpeg -i input.jpg -vf "scale=iw*min(1920/iw\,1080/ih):ih*min(1920/iw\,1080/ih)" output.jpg
         // actually just scale to fit 1920x1080 while keeping aspect ratio
         $command = [
-            'ffmpeg',
+            $this->ffmpegBinary,
             '-i', $imagePath,
             '-vf', 'scale=\'min(1920,iw)\':\'min(1080,ih)\':force_original_aspect_ratio=decrease',
             '-y',
@@ -365,12 +368,130 @@ class VideoProcessingService
      */
     public function isFfmpegInstalled(): bool
     {
+        $possiblePaths = [
+            'ffmpeg',
+            '/opt/homebrew/bin/ffmpeg',
+            '/usr/local/bin/ffmpeg',
+            '/usr/bin/ffmpeg'
+        ];
+
+        foreach ($possiblePaths as $path) {
+            try {
+                $process = new Process([$path, '-version']);
+                $process->run();
+                
+                if ($process->isSuccessful()) {
+                    $this->ffmpegBinary = $path;
+                    return true;
+                }
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if yt-dlp is installed and available
+     *
+     * @return bool
+     */
+    public function isYtDlpInstalled(): bool
+    {
+        $possiblePaths = [
+            'yt-dlp',
+            '/opt/homebrew/bin/yt-dlp',
+            '/usr/local/bin/yt-dlp',
+            '/usr/bin/yt-dlp'
+        ];
+
+        foreach ($possiblePaths as $path) {
+            try {
+                $process = new Process([$path, '--version']);
+                $process->run();
+                
+                if ($process->isSuccessful()) {
+                    $this->ytDlpBinary = $path;
+                    return true;
+                }
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Download and trim audio from YouTube
+     *
+     * @param string $url YouTube URL
+     * @param int $startTime Start time in seconds
+     * @param int $duration Duration in seconds
+     * @param string $outputPath Path to save the audio file
+     * @return bool Success status
+     * @throws \Exception
+     */
+    public function downloadYoutubeAudio(string $url, int $startTime, int $duration, string $outputPath): bool
+    {
+        if (!$this->isYtDlpInstalled()) {
+            throw new \Exception('yt-dlp is not installed on this system.');
+        }
+
+        if (!$this->isFfmpegInstalled()) {
+            throw new \Exception('FFmpeg is not installed on this system.');
+        }
+
+        // Get the direct stream URL
+        $getUrlProcess = new Process([$this->ytDlpBinary, '-f', 'bestaudio', '-g', $url]);
+        $getUrlProcess->setTimeout(60);
+        $getUrlProcess->run();
+
+        if (!$getUrlProcess->isSuccessful()) {
+            Log::error('yt-dlp failed to get URL', [
+                'error' => $getUrlProcess->getErrorOutput(),
+                'url' => $url,
+                'binary' => $this->ytDlpBinary
+            ]);
+            throw new \Exception('Failed to fetch YouTube audio stream. Please check the URL.');
+        }
+
+        $streamUrl = trim($getUrlProcess->getOutput());
+
+        if (empty($streamUrl)) {
+            throw new \Exception('Could not retrieve audio stream URL from YouTube.');
+        }
+
+        // Download and trim using ffmpeg
+        // -ss before -i is faster (input seeking)
+        $command = [
+            $this->ffmpegBinary,
+            '-ss', (string) $startTime,
+            '-i', $streamUrl,
+            '-t', (string) $duration,
+            '-c:a', 'libmp3lame', // Force MP3 encoding
+            '-b:a', '192k',
+            '-y',
+            $outputPath
+        ];
+
         try {
-            $process = new Process(['ffmpeg', '-version']);
+            $process = new Process($command);
+            $process->setTimeout(300); // 5 minutes
             $process->run();
-            return $process->isSuccessful();
-        } catch (\Exception $e) {
-            return false;
+
+            if (!$process->isSuccessful()) {
+                Log::error('FFmpeg failed to download/trim YouTube audio', [
+                    'error' => $process->getErrorOutput(),
+                    'command' => $process->getCommandLine()
+                ]);
+                throw new ProcessFailedException($process);
+            }
+
+            return file_exists($outputPath);
+        } catch (ProcessFailedException $e) {
+            throw new \Exception('Failed to process YouTube audio: ' . $e->getMessage());
         }
     }
 

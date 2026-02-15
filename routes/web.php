@@ -30,6 +30,7 @@ Route::get('/make-a-video', [VideoController::class, 'index'])->name('make-a-vid
 Route::get('/make-a-video/preview-image', [VideoController::class, 'previewImage'])->name('make-a-video.preview-image');
 Route::post('/make-a-video/step-1', [VideoController::class, 'storeStep1'])->name('make-a-video.step1');
 Route::post('/make-a-video/step-2', [VideoController::class, 'storeStep2'])->name('make-a-video.step2');
+Route::post('/make-a-video/youtube', [VideoController::class, 'storeYoutubeAudio'])->name('make-a-video.youtube');
 
 Route::middleware('auth')->group(function () {
     // Final processing step (requires auth)

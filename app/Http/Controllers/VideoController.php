@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ProcessVideoJob;
 use App\Models\VideoJob;
+use App\Services\VideoProcessingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -102,6 +103,53 @@ class VideoController extends Controller
 
             return response()->json(['success' => true, 'path' => $path]);
         } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Step 2 (Alternative): Process YouTube Audio
+     */
+    public function storeYoutubeAudio(Request $request, VideoProcessingService $videoProcessor)
+    {
+        $request->validate([
+            'url' => 'required|url',
+            'start_time' => 'required|integer|min:0',
+        ]);
+
+        try {
+            $sessionId = session()->getId();
+            // Create temp directory if not exists
+            $tempDir = "temp/{$sessionId}/audio";
+            Storage::makeDirectory($tempDir);
+            
+            $filename = 'youtube_' . time() . '.mp3';
+            $relativePath = $tempDir . '/' . $filename;
+            $absolutePath = Storage::path($relativePath);
+
+            // Duration is fixed at 30 seconds
+            $duration = 30;
+
+            // Download and trim
+            $videoProcessor->downloadYoutubeAudio(
+                $request->url, 
+                $request->start_time, 
+                $duration, 
+                $absolutePath
+            );
+            
+            session()->put('wizard.audio', $relativePath);
+            session()->put('wizard.audio_name', 'YouTube Audio (' . gmdate('i:s', $request->start_time) . '-' . gmdate('i:s', $request->start_time + $duration) . ')');
+            session()->put('wizard.step', 3);
+
+            return response()->json([
+                'success' => true, 
+                'path' => $relativePath,
+                'filename' => session('wizard.audio_name')
+            ]);
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::channel('snapmusic')->error('YOUTUBE_ERR: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }

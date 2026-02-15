@@ -108,25 +108,66 @@
 
                 <!-- Step 2: Audio Upload -->
                 <div x-show="step === 2" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0" class="flex flex-col justify-center items-center h-full">
-                    <div class="w-full text-center" @dragover.prevent @drop.prevent="handleAudioDrop($event)">
+                    <div class="w-full text-center">
                         <input type="file" x-ref="audioInput" class="hidden" accept="audio/*" @change="handleAudio($event)">
                         
-                        <div x-show="!audioFile && !audioStored">
-                            <div class="w-20 h-20 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-400">
-                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+                        <!-- No Audio Selected State -->
+                        <div x-show="!audioFile && !audioStored" class="w-full max-w-xl mx-auto">
+                            
+                            <!-- Source Tabs -->
+                            <div class="flex justify-center mb-8 bg-white/5 p-1 rounded-xl w-fit mx-auto border border-white/10">
+                                <button @click="audioSource = 'upload'" :class="audioSource === 'upload' ? 'bg-gray-700 text-white shadow-lg' : 'text-gray-400 hover:text-white'" class="px-6 py-2 rounded-lg font-medium transition-all">Upload File</button>
+                                <button @click="audioSource = 'youtube'" :class="audioSource === 'youtube' ? 'bg-red-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'" class="px-6 py-2 rounded-lg font-medium transition-all">YouTube</button>
                             </div>
-                            <h3 class="text-2xl font-bold mb-2">Add Your Audio</h3>
-                            <p class="text-gray-400 mb-8">Drag & drop MP3/WAV, or click to browse.</p>
-                            <div class="flex gap-4 justify-center">
-                                <button @click="step = 1" class="px-6 py-3 rounded-full bg-gray-800 text-gray-300 font-semibold hover:bg-gray-700 transition-colors">
-                                    &larr; Back
-                                </button>
-                                <button @click="triggerAudioUpload" class="px-8 py-3 rounded-full bg-white text-gray-900 font-bold hover:bg-gray-200 transition-colors transform hover:scale-105 active:scale-95">
-                                    Select Audio
-                                </button>
+
+                            <!-- Option 1: File Upload -->
+                            <div x-show="audioSource === 'upload'" @dragover.prevent @drop.prevent="handleAudioDrop($event)">
+                                <div class="w-20 h-20 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-400">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-2">Add Your Audio</h3>
+                                <p class="text-gray-400 mb-8">Drag & drop MP3/WAV, or click to browse.</p>
+                                <div class="flex gap-4 justify-center">
+                                    <button @click="step = 1" class="px-6 py-3 rounded-full bg-gray-800 text-gray-300 font-semibold hover:bg-gray-700 transition-colors">
+                                        &larr; Back
+                                    </button>
+                                    <button @click="triggerAudioUpload" class="px-8 py-3 rounded-full bg-white text-gray-900 font-bold hover:bg-gray-200 transition-colors transform hover:scale-105 active:scale-95">
+                                        Select Audio
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Option 2: YouTube -->
+                            <div x-show="audioSource === 'youtube'" class="bg-white/5 border border-white/10 rounded-2xl p-8 text-left">
+                                <div class="mb-6">
+                                    <label class="block text-sm font-bold text-gray-400 mb-2">YouTube Video URL</label>
+                                    <input type="text" x-model="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 transition-colors placeholder-gray-600">
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-6 mb-8">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-400 mb-2">Start Time (mm:ss)</label>
+                                        <input type="text" x-model="startTime" @input="updateEndTime" placeholder="00:00" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 transition-colors placeholder-gray-600 text-center font-mono">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-400 mb-2">End Time (Auto +30s)</label>
+                                        <input type="text" x-model="endTime" disabled class="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-gray-500 cursor-not-allowed text-center font-mono">
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-between items-center">
+                                    <button @click="step = 1" class="px-6 py-3 rounded-full bg-gray-800 text-gray-300 font-semibold hover:bg-gray-700 transition-colors">
+                                        &larr; Back
+                                    </button>
+                                    <button @click="fetchYoutubeAudio" :disabled="isFetchingYoutube" class="px-8 py-3 rounded-full bg-red-600 text-white font-bold shadow-lg shadow-red-600/30 hover:shadow-red-600/50 transition-all transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                                        <span x-show="isFetchingYoutube" class="animate-spin h-5 w-5 border-2 border-white rounded-full border-t-transparent"></span>
+                                        <span x-text="isFetchingYoutube ? 'Fetching...' : 'Use Audio &rarr;'"></span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
+                        <!-- Audio Selected State -->
                         <div x-show="audioFile || audioStored" class="flex flex-col items-center w-full">
                             <div class="w-full max-w-md p-6 rounded-2xl bg-white/5 border border-white/10 mb-8">
                                 <div class="flex items-center gap-4 mb-4">
@@ -307,6 +348,13 @@
                 audioFile: null,
                 audioName: {!! isset($wizardData['audio_name']) ? "'" . e($wizardData['audio_name']) . "'" : 'null' !!},
                 audioStored: {{ isset($wizardData['audio']) ? 'true' : 'false' }},
+                
+                // YouTube Audio State
+                audioSource: 'upload', // 'upload' or 'youtube'
+                youtubeUrl: '',
+                startTime: '00:00',
+                endTime: '00:30',
+                isFetchingYoutube: false,
 
                 uploading: false,
                 uploadProgress: 0,
@@ -531,6 +579,76 @@
                             console.error(e);
                         }
                     }, 2000);
+                },
+
+                updateEndTime() {
+                    let seconds = this.parseTime(this.startTime);
+                    if (seconds === null) return; // Invalid format
+                    this.endTime = this.formatTime(seconds + 30);
+                },
+
+                parseTime(timeStr) {
+                    if (!timeStr) return 0;
+                    const parts = timeStr.split(':');
+                    if (parts.length === 2) {
+                        return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                    }
+                    if (parts.length === 1 && !isNaN(parts[0])) {
+                        return parseInt(parts[0]);
+                    }
+                    return null;
+                },
+
+                formatTime(seconds) {
+                    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+                    const s = (seconds % 60).toString().padStart(2, '0');
+                    return `${m}:${s}`;
+                },
+
+                async fetchYoutubeAudio() {
+                    if (!this.youtubeUrl) {
+                        this.errorMessage = "Please enter a YouTube URL.";
+                        return;
+                    }
+                    
+                    const startSeconds = this.parseTime(this.startTime);
+                    if (startSeconds === null) {
+                        this.errorMessage = "Invalid start time format (use mm:ss or seconds).";
+                        return;
+                    }
+
+                    this.isFetchingYoutube = true;
+                    this.errorMessage = '';
+
+                    try {
+                        const response = await fetch('{{ route('make-a-video.youtube') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                url: this.youtubeUrl,
+                                start_time: startSeconds
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(data.message || 'Failed to fetch audio from YouTube');
+                        }
+
+                        this.audioStored = true;
+                        this.audioName = data.filename || 'YouTube Audio';
+                        this.step = 3;
+
+                    } catch (e) {
+                        this.errorMessage = e.message;
+                    } finally {
+                        this.isFetchingYoutube = false;
+                    }
                 },
 
                 reset() {
