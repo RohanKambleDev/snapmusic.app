@@ -13,9 +13,9 @@
             <!-- Header -->
             <div class="text-center mb-12">
                 <h1 class="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-                    Create Your Audio Image
+                    Create Your SnapMusic
                 </h1>
-                <p class="mt-4 text-gray-400">Turn your image and audio into a viral audio image in 3 simple steps.</p>
+                <p class="mt-4 text-gray-400">Turn your image and audio into a viral SnapMusic in 3 simple steps.</p>
             </div>
 
             <!-- Wizard Progress -->
@@ -68,7 +68,7 @@
                     <div class="w-full text-center" @dragover.prevent @drop.prevent="handleImageDrop($event)">
                         <input type="file" x-ref="imageInput" class="hidden" accept="image/*" @change="handleImage($event)">
                         
-                        <div x-show="!imagePreview">
+                        <div x-show="!imagePreview && !imageStored">
                             <div class="w-20 h-20 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-purple-400">
                                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             </div>
@@ -79,16 +79,27 @@
                             </button>
                         </div>
 
-                        <div x-show="imagePreview" class="flex flex-col items-center">
+                        <!-- Preview or Stored State -->
+                        <div x-show="imagePreview || imageStored" class="flex flex-col items-center">
                             <div class="relative w-full max-w-md aspect-square rounded-xl overflow-hidden shadow-2xl border border-white/10 group bg-black/40 flex items-center justify-center">
-                                <img :src="imagePreview" class="max-w-full max-h-full object-contain">
+                                <template x-if="imagePreview">
+                                    <img :src="imagePreview" class="max-w-full max-h-full object-contain">
+                                </template>
+                                <template x-if="!imagePreview && imageStored">
+                                    <div class="text-gray-400 flex flex-col items-center">
+                                        <svg class="w-12 h-12 mb-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                        <span>Image Saved</span>
+                                    </div>
+                                </template>
+
                                 <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button @click="triggerImageUpload" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white border border-white/20 backdrop-blur-md">Change Image</button>
                                 </div>
                             </div>
                             <div class="mt-8">
-                                <button @click="step = 2" class="px-10 py-3 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all transform hover:-translate-y-1">
-                                    Continue &rarr;
+                                <button @click="uploadStep1" :disabled="uploading" class="px-10 py-3 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                                    <span x-show="uploading" class="animate-spin h-5 w-5 border-2 border-white rounded-full border-t-transparent"></span>
+                                    <span x-text="uploading ? 'Uploading...' : 'Continue &rarr;'"></span>
                                 </button>
                             </div>
                         </div>
@@ -100,7 +111,7 @@
                     <div class="w-full text-center" @dragover.prevent @drop.prevent="handleAudioDrop($event)">
                         <input type="file" x-ref="audioInput" class="hidden" accept="audio/*" @change="handleAudio($event)">
                         
-                        <div x-show="!audioFile">
+                        <div x-show="!audioFile && !audioStored">
                             <div class="w-20 h-20 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-400">
                                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
                             </div>
@@ -116,27 +127,28 @@
                             </div>
                         </div>
 
-                        <div x-show="audioFile" class="flex flex-col items-center w-full">
+                        <div x-show="audioFile || audioStored" class="flex flex-col items-center w-full">
                             <div class="w-full max-w-md p-6 rounded-2xl bg-white/5 border border-white/10 mb-8">
                                 <div class="flex items-center gap-4 mb-4">
                                     <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
                                         🎵
                                     </div>
                                     <div class="text-left overflow-hidden">
-                                        <div class="font-medium text-white truncate" x-text="audioName"></div>
-                                        <div class="text-xs text-gray-500">Ready to upload</div>
+                                        <div class="font-medium text-white truncate" x-text="audioName || 'Audio File'"></div>
+                                        <div class="text-xs text-gray-500" x-text="audioStored ? 'Stored in Session' : 'Ready to upload'"></div>
                                     </div>
                                     <button @click="triggerAudioUpload" class="ml-auto text-xs text-blue-400 hover:text-blue-300 underline">Change</button>
                                 </div>
-                                <audio x-ref="audioPreview" controls class="w-full"></audio>
+                                <audio x-ref="audioPreview" controls class="w-full" x-show="audioFile"></audio>
                             </div>
                             
                             <div class="flex gap-4">
                                 <button @click="step = 1" class="px-6 py-3 rounded-full bg-gray-800 text-gray-300 font-semibold hover:bg-gray-700 transition-colors">
                                     &larr; Back
                                 </button>
-                                <button @click="step = 3" class="px-10 py-3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all transform hover:-translate-y-1">
-                                    Review &rarr;
+                                <button @click="uploadStep2" :disabled="uploading" class="px-10 py-3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all transform hover:-translate-y-1 disabled:opacity-50 flex items-center gap-2">
+                                     <span x-show="uploading" class="animate-spin h-5 w-5 border-2 border-white rounded-full border-t-transparent"></span>
+                                     <span x-text="uploading ? 'Uploading...' : 'Review &rarr;'"></span>
                                 </button>
                             </div>
                         </div>
@@ -145,14 +157,22 @@
 
                 <!-- Step 3: Review -->
                 <div x-show="step === 3" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0" class="flex flex-col h-full py-4">
-                    <h2 class="text-3xl font-bold text-center mb-10">Review Your Audio Image</h2>
+                    <h2 class="text-3xl font-bold text-center mb-10">Review Your Snap & the Music</h2>
                     
                     <div class="grid md:grid-cols-2 gap-10 mb-12 items-start">
                         <!-- Image Preview -->
                         <div class="flex flex-col items-center">
                             <div class="text-xs text-gray-500 uppercase tracking-widest mb-3 font-bold">Visual Asset</div>
                             <div class="w-full aspect-square bg-black/60 rounded-2xl border border-white/10 overflow-hidden flex items-center justify-center shadow-inner">
-                                <img :src="imagePreview" class="max-w-full max-h-full object-contain">
+                                <template x-if="imagePreview">
+                                    <img :src="imagePreview" class="max-w-full max-h-full object-contain">
+                                </template>
+                                <template x-if="!imagePreview">
+                                     <div class="text-gray-500 flex flex-col items-center">
+                                        <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                        <span>Image Ready</span>
+                                    </div>
+                                </template>
                             </div>
                         </div>
 
@@ -163,7 +183,7 @@
                                 <div class="flex items-center gap-4">
                                     <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-xl">🔊</div>
                                     <div class="overflow-hidden">
-                                        <div class="text-white font-bold truncate" x-text="audioName"></div>
+                                        <div class="text-white font-bold truncate" x-text="audioName || 'Uploaded Audio'"></div>
                                         <div class="text-gray-500 text-xs mt-0.5">MP4 Video will match this duration</div>
                                     </div>
                                 </div>
@@ -174,31 +194,43 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-center gap-6 pt-4">
-                        <button @click="step = 2" class="px-8 py-3 rounded-full bg-gray-800 text-gray-300 font-bold hover:bg-gray-700 transition-all">
-                            Edit Assets
-                        </button>
-                        <button @click="submit" class="px-12 py-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold shadow-lg shadow-green-500/30 hover:shadow-green-500/50 transition-all transform hover:scale-105 active:scale-95">
-                            ✨ Create SnapMusic Now
-                        </button>
+                    <div class="flex flex-col items-center gap-6 pt-4">
+                        
+                        <template x-if="isLoggedIn">
+                             <div class="flex gap-6">
+                                <button @click="step = 2" class="px-8 py-3 rounded-full bg-gray-800 text-gray-300 font-bold hover:bg-gray-700 transition-all">
+                                    Edit Assets
+                                </button>
+                                <button @click="submitFinal" :disabled="uploading" class="px-12 py-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold shadow-lg shadow-green-500/30 hover:shadow-green-500/50 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50">
+                                    <span x-show="!uploading">✨ Create SnapMusic Now</span>
+                                    <span x-show="uploading">Processing...</span>
+                                </button>
+                             </div>
+                        </template>
+
+                        <template x-if="!isLoggedIn">
+                            <div class="text-center w-full max-w-md bg-white/5 p-6 rounded-2xl border border-yellow-500/30">
+                                <h3 class="text-xl font-bold text-yellow-100 mb-4">Account Required</h3>
+                                <p class="text-gray-400 mb-6">You're almost there! Please log in or register to process your video. Your files are safe.</p>
+                                <div class="flex gap-4 justify-center">
+                                    <a href="{{ route('login') }}" class="px-8 py-3 rounded-full bg-white text-gray-900 font-bold hover:bg-gray-200 transition-colors">
+                                        Log In
+                                    </a>
+                                    <a href="{{ route('register') }}" class="px-8 py-3 rounded-full bg-transparent border border-white/30 text-white font-bold hover:bg-white/10 transition-colors">
+                                        Register
+                                    </a>
+                                </div>
+                            </div>
+                        </template>
+
                     </div>
                 </div>
 
                 <!-- Step 4: Processing (Status) -->
                 <div x-show="step === 4" x-cloak x-transition:enter="transition ease-out duration-300" class="flex flex-col justify-center items-center h-full text-center">
                     
-                    <!-- Uploading State -->
-                    <div x-show="uploading" class="w-full max-w-md">
-                        <div class="w-20 h-20 rounded-full border-4 border-white/10 border-t-purple-500 animate-spin mx-auto mb-8"></div>
-                        <h3 class="text-2xl font-bold mb-3 text-white">Uploading Your Media</h3>
-                        <p class="text-gray-400 mb-8">Securely sending files to our processing cloud...</p>
-                        <div class="w-full bg-gray-800 rounded-full h-2.5 overflow-hidden shadow-inner">
-                            <div class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300 shadow-[0_0_10px_rgba(147,51,234,0.5)]" :style="'width: ' + uploadProgress + '%'"></div>
-                        </div>
-                    </div>
-
                     <!-- Processing State -->
-                    <div x-show="!uploading && jobStatus !== 'completed' && jobStatus !== 'failed'">
+                    <div x-show="jobStatus !== 'completed' && jobStatus !== 'failed'">
                         <div class="relative w-28 h-28 mx-auto mb-8">
                             <div class="absolute inset-0 rounded-full border-4 border-white/5"></div>
                             <div class="absolute inset-0 rounded-full border-4 border-t-green-400 border-r-green-400 border-b-transparent border-l-transparent animate-spin"></div>
@@ -217,8 +249,8 @@
                         <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center text-4xl mb-6 shadow-lg shadow-green-500/20 border border-green-500/30">
                             🎉
                         </div>
-                        <h3 class="text-3xl font-bold text-white mb-2">Audio Image Ready!</h3>
-                        <p class="text-gray-400 mb-10">Your audio image has been generated and is ready to share.</p>
+                        <h3 class="text-3xl font-bold text-white mb-2">SnapMusic is ready</h3>
+                        <p class="text-gray-400 mb-10">Your SnapMusic has been generated and is ready to share.</p>
                         
                         <div class="w-full max-w-3xl flex justify-center mb-10">
                             <div class="relative rounded-2xl overflow-hidden shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] border border-white/10 bg-black group flex justify-center w-full min-h-[300px]">
@@ -234,7 +266,7 @@
                             
                             <button @click="shareVideo" class="px-8 py-4 rounded-full bg-blue-600 text-white font-bold hover:bg-blue-500 transition-all flex items-center gap-2 shadow-xl hover:-translate-y-1">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
-                                Share
+                                Share SnapMusic
                             </button>
 
                             <button @click="reset" class="px-8 py-4 rounded-full bg-white/5 text-white font-semibold hover:bg-white/10 transition-all border border-white/10 backdrop-blur-sm">
@@ -265,11 +297,17 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('videoWizard', () => ({
-                step: 1,
+                step: {{ $wizardData['step'] ?? 1 }},
+                isLoggedIn: {{ auth()->check() ? 'true' : 'false' }},
+                
                 imageFile: null,
-                imagePreview: null,
+                imagePreview: {!! isset($wizardData['image']) ? "'" . route('make-a-video.preview-image') . '?t=' . time() . "'" : 'null' !!},
+                imageStored: {{ isset($wizardData['image']) ? 'true' : 'false' }},
+                
                 audioFile: null,
-                audioName: null,
+                audioName: {!! isset($wizardData['audio_name']) ? "'" . e($wizardData['audio_name']) . "'" : 'null' !!},
+                audioStored: {{ isset($wizardData['audio']) ? 'true' : 'false' }},
+
                 uploading: false,
                 uploadProgress: 0,
                 jobId: null,
@@ -278,6 +316,14 @@
                 errorMessage: '',
                 videoUrl: null,
                 downloadUrl: null,
+
+                init() {
+                    // If we restored session to Step 3, ensure we reflect that files are ready
+                    if (this.step >= 3) {
+                        this.imageStored = true;
+                        this.audioStored = true;
+                    }
+                },
 
                 triggerImageUpload() { this.$refs.imageInput.click(); },
 
@@ -290,17 +336,65 @@
                         this.errorMessage = "Please select a valid image file.";
                         return;
                     }
-                    if (file.size > 10 * 1024 * 1024) {
-                        this.errorMessage = "Image is too large (Max 10MB).";
+                    if (file.size > 5 * 1024 * 1024) {
+                        this.errorMessage = "Image is too large (Max 5MB).";
                         return;
                     }
                     
                     this.errorMessage = '';
                     this.imageFile = file;
+                    this.imageStored = false; // Reset stored status as we have a new file
                     
                     const reader = new FileReader();
                     reader.onload = (e) => { this.imagePreview = e.target.result; };
                     reader.readAsDataURL(file);
+
+                    // Auto upload logic can go here if we wanted immediate upload, 
+                    // but we will stick to "Continue" button for explicit action
+                },
+
+                async uploadStep1() {
+                    // If we have a stored image and no new file, just proceed
+                    if (this.imageStored && !this.imageFile) {
+                        this.step = 2;
+                        return;
+                    }
+
+                    if (!this.imageFile) {
+                        this.errorMessage = "Please select an image.";
+                        return;
+                    }
+
+                    this.uploading = true;
+                    this.errorMessage = '';
+                    
+                    const formData = new FormData();
+                    formData.append('image', this.imageFile);
+
+                    try {
+                        const response = await fetch('{{ route('make-a-video.step1') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            const data = await response.json();
+                            throw new Error(data.message || 'Image upload failed');
+                        }
+
+                        // Success
+                        this.imageStored = true;
+                        this.step = 2;
+
+                    } catch (e) {
+                        this.errorMessage = e.message;
+                    } finally {
+                        this.uploading = false;
+                    }
                 },
 
                 triggerAudioUpload() { this.$refs.audioInput.click(); },
@@ -310,7 +404,6 @@
 
                 processAudio(file) {
                     if (!file) return;
-                    // Loose check for audio types
                     if (!file.type.startsWith('audio/') && !file.name.match(/\.(mp3|wav|m4a)$/i)) {
                         this.errorMessage = "Please select a valid audio file.";
                         return;
@@ -323,6 +416,7 @@
                     this.errorMessage = '';
                     this.audioFile = file;
                     this.audioName = file.name;
+                    this.audioStored = false;
                     
                     const url = URL.createObjectURL(file);
                     this.$nextTick(() => {
@@ -332,38 +426,26 @@
                     });
                 },
 
-                reset() {
-                    this.step = 1;
-                    this.imageFile = null;
-                    this.imagePreview = null;
-                    this.audioFile = null;
-                    this.audioName = null;
-                    this.uploading = false;
-                    this.jobId = null;
-                    this.jobStatus = 'idle';
-                    this.videoUrl = null;
-                    this.downloadUrl = null;
-                    this.errorMessage = '';
-                },
+                async uploadStep2() {
+                     // If we have stored audio and no new file, just proceed
+                     if (this.audioStored && !this.audioFile) {
+                        this.step = 3;
+                        return;
+                    }
 
-                async submit() {
-                    if (!this.imageFile || !this.audioFile) return;
-                    
-                    this.step = 4;
+                    if (!this.audioFile) {
+                        this.errorMessage = "Please select an audio file.";
+                        return;
+                    }
+
                     this.uploading = true;
-                    this.uploadProgress = 0;
-                    this.statusMessage = 'Uploading your assets...';
+                    this.errorMessage = '';
                     
                     const formData = new FormData();
-                    formData.append('image', this.imageFile);
                     formData.append('audio', this.audioFile);
-                    
-                    try {
-                        const progressInterval = setInterval(() => {
-                            if (this.uploadProgress < 90) this.uploadProgress += 10;
-                        }, 200);
 
-                        const response = await fetch('{{ route('make-a-video.upload') }}', {
+                    try {
+                        const response = await fetch('{{ route('make-a-video.step2') }}', {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',
@@ -371,16 +453,43 @@
                             },
                             body: formData
                         });
-                        
-                        clearInterval(progressInterval);
+
+                        if (!response.ok) {
+                            const data = await response.json();
+                            throw new Error(data.message || 'Audio upload failed');
+                        }
+
+                        // Success
+                        this.audioStored = true;
+                        this.step = 3;
+
+                    } catch (e) {
+                        this.errorMessage = e.message;
+                    } finally {
+                        this.uploading = false;
+                    }
+                },
+
+                async submitFinal() {
+                    this.step = 4;
+                    this.uploading = true;
+                    this.statusMessage = 'Starting processing...';
+                    
+                    try {
+                        const response = await fetch('{{ route('make-a-video.process') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        });
                         
                         if (!response.ok) {
                             const data = await response.json();
-                            throw new Error(data.message || 'Upload failed');
+                            throw new Error(data.message || 'Processing failed');
                         }
                         
                         const data = await response.json();
-                        this.uploadProgress = 100;
                         this.jobId = data.job_id;
                         this.startPolling();
                         
@@ -390,7 +499,7 @@
                         this.errorMessage = e.message;
                     }
                 },
-                
+
                 startPolling() {
                     this.uploading = false;
                     this.jobStatus = 'pending';
@@ -405,7 +514,7 @@
                             
                             if (data.status === 'processing') {
                                 this.jobStatus = 'processing';
-                                this.statusMessage = 'Rendering your audio image (this usually takes 10-30s)...';
+                                this.statusMessage = 'Rendering your SnapMusic (this usually takes 10-30s)...';
                             } else if (data.status === 'completed') {
                                 clearInterval(poll);
                                 this.jobStatus = 'completed';
@@ -424,30 +533,44 @@
                     }, 2000);
                 },
 
+                reset() {
+                    this.step = 1;
+                    this.imageFile = null;
+                    this.imagePreview = null;
+                    this.imageStored = false;
+                    this.audioFile = null;
+                    this.audioName = null;
+                    this.audioStored = false;
+                    this.uploading = false;
+                    this.jobId = null;
+                    this.jobStatus = 'idle';
+                    this.videoUrl = null;
+                    this.downloadUrl = null;
+                    this.errorMessage = '';
+                },
+
                 async shareVideo() {
-                    if (!this.videoUrl) return;
+                    if (!this.downloadUrl) {
+                        alert('Video URL not available yet.');
+                        return;
+                    }
                     
-                    // Construct absolute URL for sharing
                     const shareUrl = window.location.origin + this.downloadUrl;
                     
-                    if (navigator.share) {
-                        try {
+                    try {
+                        if (navigator.share) {
                             await navigator.share({
                                 title: 'My SnapMusic Video',
                                 text: 'Check out this video I made with SnapMusic!',
                                 url: shareUrl
                             });
-                        } catch (err) {
-                            console.error('Error sharing:', err);
-                        }
-                    } else {
-                        // Fallback to clipboard copy
-                        try {
+                        } else {
                             await navigator.clipboard.writeText(shareUrl);
-                            alert('Video link copied to clipboard!');
-                        } catch (err) {
-                            console.error('Failed to copy:', err);
+                            alert('SnapMusic link copied to clipboard!');
                         }
+                    } catch (err) {
+                        console.error('Share failed:', err);
+                        alert('Could not share video. Please try manually copying the URL.');
                     }
                 }
             }));

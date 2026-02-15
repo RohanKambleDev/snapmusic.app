@@ -28,6 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if ($request->session()->has('wizard.step')) {
+            return redirect()->route('make-a-video.index');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
