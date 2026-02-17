@@ -43,12 +43,19 @@ class ProcessVideoJob implements ShouldQueue
             $imagePath = Storage::path($this->videoJob->image_path);
             $audioPath = Storage::path($this->videoJob->audio_path);
 
-            // Check if source files exist before processing
+            // Check if source files exist and are readable
             if (!File::exists($imagePath)) {
                 throw new \Exception("Image source file not found: {$imagePath}");
             }
+            if (!is_readable($imagePath)) {
+                throw new \Exception("Image source file not readable: {$imagePath}");
+            }
+
             if (!File::exists($audioPath)) {
                 throw new \Exception("Audio source file not found: {$audioPath}");
+            }
+            if (!is_readable($audioPath)) {
+                throw new \Exception("Audio source file not readable: {$audioPath}");
             }
 
             // Generate unique filename for output video
