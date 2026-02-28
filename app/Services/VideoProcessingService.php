@@ -48,9 +48,18 @@ class VideoProcessingService
         // Build FFmpeg command
         $command = [
             'ffmpeg',
-            '-loop', '1',
-            '-i', $imagePath,
-            '-i', $audioPath,
+            '-loop', '1',          // Loop the image
+            '-i', $imagePath,      // Input 1
+            '-i', $audioPath,      // Input 2
+            '-c:v', 'libx264',     // Use H.264 video codec
+            '-tune', 'stillimage', // Optimization for photos
+            '-c:a', 'aac',         // Encode audio to AAC
+            '-b:a', '192k',        // Set decent audio quality
+            '-pix_fmt', 'yuv420p', // Ensure compatibility with browsers/phones
+            '-shortest',           // CRITICAL: Stop the loop when the audio ends
+            '-vf', "scale='min(1920,iw)':'min(1080,ih)':force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2",
+            '-y',                  // Overwrite existing file
+            $outputPath,           // The final destination
         ];
 
         if ($hasWatermark) {
