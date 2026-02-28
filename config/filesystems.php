@@ -43,6 +43,16 @@ return [
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
+            'permissions' => [
+                'file' => [
+                    'public' => 0664,  // Allows the group to write/delete
+                    'private' => 0600,
+                ],
+                'dir' => [
+                    'public' => 0775,  // Allows the group to create subfolders
+                    'private' => 0700,
+                ],
+            ],
             'throw' => false,
             'report' => false,
         ],
