@@ -76,13 +76,15 @@ class VideoProcessingService
         }
 
         // Common output options
+        // Note: -shortest is unreliable with -loop 1 on newer FFmpeg versions
+        // (video gets truncated to 1-3 seconds). Use explicit -t duration instead.
         array_push($command,
             '-c:v', 'libx264',
             '-tune', 'stillimage',
             '-c:a', 'aac',
             '-b:a', '192k',
             '-pix_fmt', 'yuv420p',
-            '-shortest',
+            '-t', (string) $duration,
             '-y',
             $outputPath
         );
