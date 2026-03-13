@@ -327,6 +327,11 @@ class VideoController extends Controller
             Storage::delete($videoJob->video_path);
         }
 
+        // Delete the thumbnail file if it exists
+        if ($videoJob->thumbnail_path && Storage::exists($videoJob->thumbnail_path)) {
+            Storage::delete($videoJob->thumbnail_path);
+        }
+
         // Delete source files if they still exist
         if ($videoJob->image_path && Storage::exists($videoJob->image_path)) {
             Storage::delete($videoJob->image_path);
