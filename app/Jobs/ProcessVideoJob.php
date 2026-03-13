@@ -151,19 +151,37 @@ class ProcessVideoJob implements ShouldQueue
             }
 
             // Generate Thumbnail
-            $thumbnailFileName = 'thumb_' . $this->videoJob->id . '_' . time() . '.jpg';
+            // Since the video is just a static image with audio, we can simply copy the original uploaded image.
+            // This avoids FFmpeg frame extraction errors on certain servers and is significantly faster.
+            $originalExtension = File::extension($this->videoJob->image_path) ?: 'jpg';
+            $thumbnailFileName = 'thumb_' . $this->videoJob->id . '_' . time() . '.' . $originalExtension;
             $thumbnailPath = 'videos/thumbnails/' . $thumbnailFileName;
             $absoluteThumbnailPath = Storage::path($thumbnailPath);
             
             // Ensure thumbnails directory exists
             Storage::makeDirectory('videos/thumbnails');
 
-            if ($videoProcessor->generateThumbnail($absoluteVideoPath, $absoluteThumbnailPath)) {
+            try {
+                $originalImageSrc = Storage::path($this->videoJob->image_path);
+                
+                // For a true thumbnail we could resize, but for SnapMusic just copying the original is fine 
+                // and avoids memory/FFmpeg issues entirely.
+                File::copy($originalImageSrc, $absoluteThumbnailPath);
                 $this->videoJob->update(['thumbnail_path' => $thumbnailPath]);
-            } else {
-                Log::channel('snapmusic')->warning('Thumbnail generation failed', [
-                    'video_job_id' => $this->videoJob->id,
+                
+            } catch (\Exception $e) {
+                // Fallback to FFmpeg if copy fails for some unexpected reason
+                Log::channel('snapmusic')->warning('Image copy failed, falling back to FFmpeg for thumbnail', [
+                    'error' => $e->getMessage()
                 ]);
+                
+                if ($videoProcessor->generateThumbnail($absoluteVideoPath, $absoluteThumbnailPath)) {
+                    $this->videoJob->update(['thumbnail_path' => $thumbnailPath]);
+                } else {
+                    Log::channel('snapmusic')->warning('Thumbnail generation failed', [
+                        'video_job_id' => $this->videoJob->id,
+                    ]);
+                }
             }
 
             // Mark job as completed
